@@ -8,37 +8,12 @@ import Layout from '../layouts/Layout.astro';
 
 		<article>
 			<header>
-				<p class="site-name">swamikumar.com</p>
 				<h1>Swami Kumar</h1>
-				<p class="summary">
-					Strategy, intelligence, and the work of helping teams make clearer decisions.
-				</p>
+				<p class="summary">A creative mind stuck in a logical world.</p>
 			</header>
 
-			<section aria-labelledby="experience-heading">
-				<div class="section-label">
-					<h2 id="experience-heading">Experience</h2>
-					<span>Selected</span>
-				</div>
-
-				<ul class="experience-list">
-					<li>
-						<span class="period">2021 - 2026</span>
-						<p><strong>Atlan</strong> — GTM strategy, customer intelligence, and product marketing.</p>
-					</li>
-					<li>
-						<span class="period">2019 - 2021</span>
-						<p><strong>National Health Authority, India</strong> — healthcare innovation and public systems.</p>
-					</li>
-					<li>
-						<span class="period">Earlier</span>
-						<p><strong>Strategy, growth, and research</strong> — political, corporate, product, and venture work.</p>
-					</li>
-				</ul>
-			</section>
-
 			<footer>
-				<p>More soon.</p>
+				<p>More coming soon.</p>
 			</footer>
 		</article>
 	</main>
@@ -48,7 +23,6 @@ import Layout from '../layouts/Layout.astro';
 	:root {
 		--ink: #1d1d1f;
 		--muted: rgba(60, 60, 67, 0.72);
-		--rule: rgba(60, 60, 67, 0.16);
 		--paper: #f6f3ed;
 		--sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
 	}
@@ -72,9 +46,6 @@ import Layout from '../layouts/Layout.astro';
 		padding: clamp(2.25rem, 7vh, 5.5rem) 0 2.5rem;
 	}
 
-	.site-name,
-	.section-label,
-	.period,
 	footer p {
 		font-family: var(--sans);
 		font-size: 0.8rem;
@@ -83,12 +54,7 @@ import Layout from '../layouts/Layout.astro';
 		color: var(--muted);
 	}
 
-	.site-name {
-		margin: 0 0 2rem;
-	}
-
 	h1,
-	h2,
 	p {
 		font-family: var(--sans);
 	}
@@ -111,56 +77,8 @@ import Layout from '../layouts/Layout.astro';
 		color: var(--muted);
 	}
 
-	section {
-		margin-top: clamp(3rem, 10vh, 6rem);
-		border-top: 1px solid var(--rule);
-	}
-
-	.section-label {
-		display: flex;
-		justify-content: space-between;
-		padding: 0.75rem 0;
-		border-bottom: 1px solid var(--rule);
-	}
-
-	h2 {
-		margin: 0;
-		font: inherit;
-	}
-
-	.experience-list {
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	.experience-list li {
-		display: grid;
-		grid-template-columns: 8.75rem minmax(0, 1fr);
-		gap: 1rem;
-		padding: 1rem 0;
-		border-bottom: 1px solid var(--rule);
-	}
-
-	.period {
-		padding-top: 0.08rem;
-	}
-
-	.experience-list p {
-		margin: 0;
-		font-size: 1rem;
-		letter-spacing: -0.012em;
-		line-height: 1.4;
-		color: var(--muted);
-	}
-
-	strong {
-		font-weight: 600;
-		color: var(--ink);
-	}
-
 	footer {
-		margin-top: clamp(3rem, 8vh, 5rem);
+		margin-top: 2rem;
 	}
 
 	footer p {
@@ -184,11 +102,6 @@ import Layout from '../layouts/Layout.astro';
 	@media (max-width: 600px) {
 		article {
 			width: min(100% - 2.5rem, 52rem);
-		}
-
-		.experience-list li {
-			grid-template-columns: 1fr;
-			gap: 0.28rem;
 		}
 	}
 </style>
