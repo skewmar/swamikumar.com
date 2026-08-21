@@ -3,264 +3,115 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-	<main class="page-shell">
-		<div class="ambient ambient-left"></div>
-		<div class="ambient ambient-right"></div>
+	<main class="placeholder">
+		<div class="wash wash-sky" aria-hidden="true"></div>
+		<div class="wash wash-sea" aria-hidden="true"></div>
+		<div class="paper-grain" aria-hidden="true"></div>
 
-		<section class="hero">
-			<p class="eyebrow">swamikumar.com</p>
-			<h1>A personal site with room to grow.</h1>
-			<p class="lede">
-				This is the start of a home on the web for ideas, projects, notes, and the small things
-				that make your corner of the internet feel unmistakably yours.
-			</p>
-
-			<div class="hero-actions">
-				<a class="primary" href="mailto:hello@swamikumar.com">Say hello</a>
-				<a class="secondary" href="#blueprint">See the blueprint</a>
-			</div>
-		</section>
-
-		<section class="grid" id="blueprint">
-			<article class="card feature">
-				<p class="card-label">First move</p>
-				<h2>Start simple, then layer personality.</h2>
-				<p>
-					Astro keeps the base site fast and lightweight. When you want richer interactions later,
-					you can add React, animations, or content tooling without rebuilding everything.
-				</p>
-			</article>
-
-			<article class="card">
-				<p class="card-label">Good fits</p>
-				<ul>
-					<li>Personal landing page</li>
-					<li>Writing and notes</li>
-					<li>Project showcase</li>
-					<li>Playful UI experiments</li>
-				</ul>
-			</article>
-
-			<article class="card">
-				<p class="card-label">Easy next sections</p>
-				<ul>
-					<li>About</li>
-					<li>Selected work</li>
-					<li>Writing</li>
-					<li>Contact</li>
-				</ul>
-			</article>
-		</section>
-
-		<section class="marquee">
-			<span>minimal setup</span>
-			<span>custom domain ready</span>
-			<span>fast by default</span>
-			<span>portable hosting</span>
-			<span>your style next</span>
+		<section class="intro">
+			<p class="kicker">swamikumar.com</p>
+			<h1>Swami Kumar</h1>
+			<p class="status">Coming soon</p>
 		</section>
 	</main>
 </Layout>
 
 <style>
 	:root {
-		--page-bg: #f6efe4;
-		--ink: #1f1a17;
-		--muted: #665b54;
-		--card: rgba(255, 251, 246, 0.72);
-		--line: rgba(61, 45, 34, 0.12);
-		--accent: #c45c2c;
-		--accent-soft: #efc38f;
-		--shadow: 0 22px 80px rgba(78, 51, 32, 0.12);
+		--ink: #232421;
+		--quiet-ink: rgba(35, 36, 33, 0.57);
 	}
 
-	.page-shell {
+	.placeholder {
 		position: relative;
-		overflow: hidden;
+		display: grid;
 		min-height: 100vh;
-		padding: 48px 20px 72px;
-		color: var(--ink);
-		background:
-			radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 28%),
-			linear-gradient(180deg, #fbf6ee 0%, var(--page-bg) 100%);
+		place-items: center;
+		overflow: hidden;
+		isolation: isolate;
+		background: linear-gradient(146deg, #f9f7f0 3%, #eaf1ee 44%, #e2edf0 100%);
 	}
 
-	.page-shell::before {
-		content: '';
+	.wash {
+		position: absolute;
+		z-index: -2;
+		border-radius: 45% 55% 58% 42% / 52% 43% 57% 48%;
+		filter: blur(44px) saturate(82%);
+		opacity: 0.78;
+		transform: rotate(-8deg);
+	}
+
+	.wash-sky {
+		top: -23vmax;
+		right: -13vmax;
+		width: 72vmax;
+		height: 60vmax;
+		background:
+			radial-gradient(ellipse at 32% 61%, rgba(184, 214, 222, 0.78), transparent 51%),
+			radial-gradient(ellipse at 65% 38%, rgba(226, 235, 221, 0.88), transparent 60%);
+	}
+
+	.wash-sea {
+		bottom: -28vmax;
+		left: -20vmax;
+		width: 76vmax;
+		height: 51vmax;
+		background:
+			radial-gradient(ellipse at 57% 35%, rgba(154, 196, 201, 0.45), transparent 55%),
+			radial-gradient(ellipse at 28% 61%, rgba(239, 229, 200, 0.64), transparent 62%);
+	}
+
+	.paper-grain {
 		position: absolute;
 		inset: 0;
+		z-index: -1;
+		opacity: 0.55;
 		background-image:
-			linear-gradient(rgba(58, 41, 29, 0.045) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(58, 41, 29, 0.045) 1px, transparent 1px);
-		background-size: 24px 24px;
-		mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 92%);
+			radial-gradient(rgba(42, 57, 50, 0.15) 0.55px, transparent 0.8px),
+			radial-gradient(rgba(255, 255, 255, 0.95) 0.55px, transparent 0.85px),
+			repeating-linear-gradient(103deg, transparent 0 8px, rgba(73, 98, 88, 0.045) 9px, transparent 10px);
+		background-position: 0 0, 4px 5px, 0 0;
+		background-size: 7px 7px, 11px 11px, 19px 23px;
+		mix-blend-mode: multiply;
 		pointer-events: none;
 	}
 
-	.ambient {
-		position: absolute;
-		width: 34rem;
-		height: 34rem;
-		border-radius: 999px;
-		filter: blur(20px);
-		opacity: 0.5;
-		pointer-events: none;
+	.intro {
+		padding: 2rem;
+		text-align: center;
+		animation: appear 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
 	}
 
-	.ambient-left {
-		top: -10rem;
-		left: -10rem;
-		background: radial-gradient(circle, rgba(244, 171, 90, 0.65), transparent 68%);
-	}
-
-	.ambient-right {
-		right: -12rem;
-		bottom: -10rem;
-		background: radial-gradient(circle, rgba(187, 112, 77, 0.45), transparent 68%);
-	}
-
-	.hero,
-	.grid,
-	.marquee {
-		position: relative;
-		z-index: 1;
-		max-width: 1100px;
-		margin: 0 auto;
-		animation: rise 700ms ease both;
-	}
-
-	.hero {
-		padding: 6vh 0 4rem;
-	}
-
-	.eyebrow,
-	.card-label {
-		margin: 0 0 0.9rem;
-		font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
-		font-size: 0.78rem;
-		letter-spacing: 0.18em;
+	.kicker,
+	.status {
+		margin: 0;
+		font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+		font-size: 0.73rem;
+		font-weight: 500;
+		letter-spacing: 0.11em;
 		text-transform: uppercase;
-		color: var(--accent);
+		color: var(--quiet-ink);
 	}
 
 	h1 {
-		max-width: 11ch;
-		margin: 0;
-		font-family: Georgia, 'Times New Roman', serif;
-		font-size: clamp(3.4rem, 9vw, 6.8rem);
-		line-height: 0.94;
-		letter-spacing: -0.05em;
-	}
-
-	.lede {
-		max-width: 42rem;
-		margin: 1.4rem 0 0;
-		font-size: clamp(1.05rem, 2vw, 1.35rem);
-		line-height: 1.7;
-		color: var(--muted);
-	}
-
-	.hero-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.9rem;
-		margin-top: 2rem;
-	}
-
-	.hero-actions a {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0.95rem 1.2rem;
-		border-radius: 999px;
-		text-decoration: none;
-		font-weight: 600;
-		transition:
-			transform 180ms ease,
-			box-shadow 180ms ease,
-			background 180ms ease;
-	}
-
-	.hero-actions a:hover {
-		transform: translateY(-2px);
-	}
-
-	.primary {
-		color: #fffaf2;
-		background: linear-gradient(135deg, #a2471d, #d67a43);
-		box-shadow: 0 16px 40px rgba(162, 71, 29, 0.28);
-	}
-
-	.secondary {
+		margin: 1rem 0 1.35rem;
+		font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+		font-size: clamp(3.4rem, 10vw, 7.75rem);
+		font-weight: 400;
+		letter-spacing: -0.07em;
+		line-height: 0.93;
 		color: var(--ink);
-		background: rgba(255, 250, 242, 0.75);
-		border: 1px solid var(--line);
-		box-shadow: var(--shadow);
 	}
 
-	.grid {
-		display: grid;
-		grid-template-columns: 1.3fr 1fr 1fr;
-		gap: 1rem;
+	.status {
+		letter-spacing: 0.04em;
+		text-transform: none;
 	}
 
-	.card {
-		padding: 1.5rem;
-		background: var(--card);
-		border: 1px solid var(--line);
-		border-radius: 28px;
-		backdrop-filter: blur(12px);
-		box-shadow: var(--shadow);
-		animation: rise 900ms ease both;
-	}
-
-	.feature {
-		background:
-			linear-gradient(145deg, rgba(255, 250, 245, 0.95), rgba(245, 233, 214, 0.88)),
-			var(--card);
-	}
-
-	h2 {
-		margin: 0 0 0.8rem;
-		font-family: Georgia, 'Times New Roman', serif;
-		font-size: 1.9rem;
-		line-height: 1.1;
-	}
-
-	p,
-	li {
-		font-size: 1rem;
-		line-height: 1.7;
-		color: var(--muted);
-	}
-
-	ul {
-		margin: 0;
-		padding-left: 1.1rem;
-	}
-
-	.marquee {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.75rem;
-		margin-top: 1rem;
-		padding-top: 1.1rem;
-	}
-
-	.marquee span {
-		padding: 0.65rem 0.9rem;
-		border: 1px solid var(--line);
-		border-radius: 999px;
-		background: rgba(255, 252, 247, 0.75);
-		font-size: 0.95rem;
-		color: #4d413a;
-		box-shadow: 0 8px 24px rgba(78, 51, 32, 0.08);
-	}
-
-	@keyframes rise {
+	@keyframes appear {
 		from {
 			opacity: 0;
-			transform: translateY(16px);
+			transform: translateY(10px);
 		}
 
 		to {
@@ -269,27 +120,9 @@ import Layout from '../layouts/Layout.astro';
 		}
 	}
 
-	@media (max-width: 900px) {
-		.grid {
-			grid-template-columns: 1fr;
-		}
-	}
-
-	@media (max-width: 640px) {
-		.page-shell {
-			padding: 28px 16px 56px;
-		}
-
-		.hero {
-			padding-top: 2rem;
-		}
-
-		h1 {
-			max-width: 100%;
-		}
-
-		.card {
-			border-radius: 22px;
+	@media (prefers-reduced-motion: reduce) {
+		.intro {
+			animation: none;
 		}
 	}
 </style>
