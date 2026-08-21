@@ -4,8 +4,6 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout>
 	<main class="placeholder">
-		<div class="wash wash-sky" aria-hidden="true"></div>
-		<div class="wash wash-sea" aria-hidden="true"></div>
 		<div class="paper-grain" aria-hidden="true"></div>
 
 		<section class="intro">
@@ -29,43 +27,16 @@ import Layout from '../layouts/Layout.astro';
 		place-items: center;
 		overflow: hidden;
 		isolation: isolate;
-		background: linear-gradient(146deg, #f9f7f0 3%, #eaf1ee 44%, #e2edf0 100%);
-	}
-
-	.wash {
-		position: absolute;
-		z-index: -2;
-		border-radius: 45% 55% 58% 42% / 52% 43% 57% 48%;
-		filter: blur(44px) saturate(82%);
-		opacity: 0.78;
-		transform: rotate(-8deg);
-	}
-
-	.wash-sky {
-		top: -23vmax;
-		right: -13vmax;
-		width: 72vmax;
-		height: 60vmax;
 		background:
-			radial-gradient(ellipse at 32% 61%, rgba(184, 214, 222, 0.78), transparent 51%),
-			radial-gradient(ellipse at 65% 38%, rgba(226, 235, 221, 0.88), transparent 60%);
-	}
-
-	.wash-sea {
-		bottom: -28vmax;
-		left: -20vmax;
-		width: 76vmax;
-		height: 51vmax;
-		background:
-			radial-gradient(ellipse at 57% 35%, rgba(154, 196, 201, 0.45), transparent 55%),
-			radial-gradient(ellipse at 28% 61%, rgba(239, 229, 200, 0.64), transparent 62%);
+			linear-gradient(rgba(249, 247, 240, 0.08), rgba(249, 247, 240, 0.08)),
+			url('/images/abstract-cool-lines.png') center / cover no-repeat;
 	}
 
 	.paper-grain {
 		position: absolute;
 		inset: 0;
 		z-index: -1;
-		opacity: 0.55;
+		opacity: 0.16;
 		background-image:
 			radial-gradient(rgba(42, 57, 50, 0.15) 0.55px, transparent 0.8px),
 			radial-gradient(rgba(255, 255, 255, 0.95) 0.55px, transparent 0.85px),
