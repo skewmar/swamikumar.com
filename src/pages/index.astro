@@ -6,13 +6,9 @@ import Layout from '../layouts/Layout.astro';
 	<main class="home">
 		<div class="paper-grain" aria-hidden="true"></div>
 
-		<aside class="writing-strip" aria-label="Writing">
+		<aside class="writing-strip" aria-label="Site information">
 			<div>
 				<p class="name">swami kumar</p>
-				<div class="writing-status">
-					<p>writing</p>
-					<p>soon</p>
-				</div>
 			</div>
 			<p class="build-status">site being built</p>
 		</aside>
@@ -21,8 +17,6 @@ import Layout from '../layouts/Layout.astro';
 			<p class="note">notes on crafting, on systems, and in-between spaces</p>
 			<article>
 				<h1>A creative mind stuck in a logical world.</h1>
-				<p class="summary">Ideas, systems, experiments, and other obsessions.</p>
-				<p class="status"><strong>now</strong> writing soon <span>contact eventually</span></p>
 			</article>
 		</section>
 	</main>
@@ -75,10 +69,8 @@ import Layout from '../layouts/Layout.astro';
 	}
 
 	.name,
-	.writing-status p,
 	.build-status,
-	.note,
-	.status {
+	.note {
 		font-family: var(--sans);
 	}
 
@@ -87,22 +79,6 @@ import Layout from '../layouts/Layout.astro';
 		font-size: 0.6875rem;
 		font-weight: 670;
 		letter-spacing: -0.045em;
-	}
-
-	.writing-status {
-		margin-top: 4rem;
-	}
-
-	.writing-status p {
-		margin: 0 0 0.625rem;
-		font-size: 0.625rem;
-		font-weight: 570;
-		letter-spacing: -0.03em;
-	}
-
-	.writing-status p:first-child {
-		color: var(--muted);
-		font-weight: 520;
 	}
 
 	.build-status {
@@ -128,8 +104,8 @@ import Layout from '../layouts/Layout.astro';
 	}
 
 	article {
-		width: min(100%, 38.125rem);
-		margin: clamp(5.5rem, 18vh, 9.5rem) auto 0;
+		max-width: 38.125rem;
+		margin: clamp(5.5rem, 18vh, 9.5rem) 0 0;
 	}
 
 	h1 {
@@ -140,37 +116,6 @@ import Layout from '../layouts/Layout.astro';
 		letter-spacing: -0.06em;
 		line-height: 1.03;
 		color: var(--ink);
-	}
-
-	.summary {
-		max-width: 22.1875rem;
-		margin: 1.0625rem 0 0;
-		font-family: var(--sans);
-		font-size: 0.875rem;
-		font-weight: 460;
-		letter-spacing: -0.027em;
-		line-height: 1.36;
-		color: var(--muted);
-	}
-
-	.status {
-		margin: 3.125rem 0 0;
-		padding-top: 0.6875rem;
-		border-top: 1px solid rgba(29, 29, 31, 0.17);
-		font-size: 0.625rem;
-		font-weight: 500;
-		letter-spacing: -0.02em;
-		word-spacing: 0.3rem;
-		color: var(--muted);
-	}
-
-	.status strong {
-		font-weight: 630;
-		color: var(--ink);
-	}
-
-	.status span {
-		margin-left: 1.25rem;
 	}
 
 	.paper-grain {
@@ -200,11 +145,6 @@ import Layout from '../layouts/Layout.astro';
 			border-bottom: 1px solid rgba(29, 29, 31, 0.17);
 		}
 
-		.writing-status,
-		.build-status {
-			display: none;
-		}
-
 		.content {
 			padding: 1.375rem;
 		}
@@ -213,8 +153,5 @@ import Layout from '../layouts/Layout.astro';
 			margin-top: clamp(5rem, 19vh, 8rem);
 		}
 
-		.status span {
-			margin-left: 0.75rem;
-		}
 	}
 </style>
