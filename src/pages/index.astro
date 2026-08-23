@@ -3,19 +3,28 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-	<main class="note">
+	<main class="home">
 		<div class="paper-grain" aria-hidden="true"></div>
 
-		<article>
-			<header>
-				<h1>Swami Kumar</h1>
-				<p class="summary">A creative mind stuck in a logical world.</p>
-			</header>
+		<aside class="writing-strip" aria-label="Writing">
+			<div>
+				<p class="name">swami kumar</p>
+				<div class="writing-status">
+					<p>writing</p>
+					<p>soon</p>
+				</div>
+			</div>
+			<p class="build-status">site being built</p>
+		</aside>
 
-			<footer>
-				<p>More coming soon.</p>
-			</footer>
-		</article>
+		<section class="content">
+			<p class="note">notes on crafting, on systems, and in-between spaces</p>
+			<article>
+				<h1>A creative mind stuck in a logical world.</h1>
+				<p class="summary">Ideas, systems, experiments, and other obsessions.</p>
+				<p class="status"><strong>now</strong> writing soon <span>contact eventually</span></p>
+			</article>
+		</section>
 	</main>
 </Layout>
 
@@ -23,73 +32,152 @@ import Layout from '../layouts/Layout.astro';
 	:root {
 		--ink: #1d1d1f;
 		--muted: rgba(60, 60, 67, 0.72);
-		--paper: #f6f3ed;
+		--paper: #f6f4ed;
 		--sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
 	}
 
-	.note {
+	.home {
 		position: relative;
 		box-sizing: border-box;
+		display: grid;
+		grid-template-columns: 8.875rem minmax(0, 1fr);
 		min-height: 100svh;
 		overflow: hidden;
-		background:
-			radial-gradient(ellipse at 92% 0%, rgba(190, 209, 215, 0.36), transparent 34rem),
-			radial-gradient(ellipse at 0% 100%, rgba(205, 199, 176, 0.34), transparent 32rem),
-			var(--paper);
+		background: var(--paper);
 	}
 
-	article {
+	.home::before {
+		content: '';
+		position: absolute;
+		z-index: 0;
+		inset: -12%;
+		background:
+			radial-gradient(ellipse 39% 35% at 78% 19%, rgba(126, 182, 205, 0.42), transparent 68%),
+			radial-gradient(ellipse 29% 40% at 67% 67%, rgba(232, 176, 147, 0.3), transparent 70%),
+			radial-gradient(ellipse 38% 33% at 15% 88%, rgba(193, 212, 166, 0.32), transparent 70%),
+			radial-gradient(ellipse 29% 34% at 96% 92%, rgba(198, 183, 219, 0.2), transparent 70%);
+		filter: blur(28px) saturate(1.08);
+		transform: rotate(-3deg) scale(1.05);
+	}
+
+	.writing-strip,
+	.content {
 		position: relative;
 		z-index: 1;
-		width: min(100% - 3rem, 52rem);
-		margin: 0 auto;
-		padding: clamp(2.25rem, 7vh, 5.5rem) 0 2.5rem;
 	}
 
-	footer p {
+	.writing-strip {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		padding: 1.7rem 0.9375rem;
+		border-right: 1px solid rgba(29, 29, 31, 0.17);
+	}
+
+	.name,
+	.writing-status p,
+	.build-status,
+	.note,
+	.status {
 		font-family: var(--sans);
-		font-size: 0.8rem;
+	}
+
+	.name {
+		margin: 0;
+		font-size: 0.6875rem;
+		font-weight: 670;
+		letter-spacing: -0.045em;
+	}
+
+	.writing-status {
+		margin-top: 4rem;
+	}
+
+	.writing-status p {
+		margin: 0 0 0.625rem;
+		font-size: 0.625rem;
+		font-weight: 570;
+		letter-spacing: -0.03em;
+	}
+
+	.writing-status p:first-child {
+		color: var(--muted);
+		font-weight: 520;
+	}
+
+	.build-status {
+		margin: 0;
+		font-size: 0.625rem;
 		font-weight: 500;
-		letter-spacing: -0.01em;
+		letter-spacing: -0.02em;
 		color: var(--muted);
 	}
 
-	h1,
-	p {
-		font-family: var(--sans);
+	.content {
+		padding: 1.7rem 2.5rem;
+	}
+
+	.note {
+		margin: 0;
+		padding-bottom: 0.8125rem;
+		border-bottom: 1px solid rgba(29, 29, 31, 0.17);
+		font-size: 0.6875rem;
+		font-weight: 590;
+		letter-spacing: -0.032em;
+		color: rgba(29, 29, 31, 0.86);
+	}
+
+	article {
+		width: min(100%, 38.125rem);
+		margin: clamp(5.5rem, 18vh, 9.5rem) auto 0;
 	}
 
 	h1 {
 		margin: 0;
-		font-size: clamp(2rem, 5vw, 3rem);
-		font-weight: 700;
-		letter-spacing: -0.045em;
-		line-height: 1.08;
+		font-family: var(--sans);
+		font-size: clamp(1.8125rem, 3.15vw, 2.3125rem);
+		font-weight: 610;
+		letter-spacing: -0.06em;
+		line-height: 1.03;
 		color: var(--ink);
 	}
 
 	.summary {
-		max-width: 34rem;
-		margin: 0.65rem 0 0;
-		font-size: 1.0625rem;
-		letter-spacing: -0.013em;
-		line-height: 1.45;
+		max-width: 22.1875rem;
+		margin: 1.0625rem 0 0;
+		font-family: var(--sans);
+		font-size: 0.875rem;
+		font-weight: 460;
+		letter-spacing: -0.027em;
+		line-height: 1.36;
 		color: var(--muted);
 	}
 
-	footer {
-		margin-top: 2rem;
+	.status {
+		margin: 3.125rem 0 0;
+		padding-top: 0.6875rem;
+		border-top: 1px solid rgba(29, 29, 31, 0.17);
+		font-size: 0.625rem;
+		font-weight: 500;
+		letter-spacing: -0.02em;
+		word-spacing: 0.3rem;
+		color: var(--muted);
 	}
 
-	footer p {
-		margin: 0;
+	.status strong {
+		font-weight: 630;
+		color: var(--ink);
+	}
+
+	.status span {
+		margin-left: 1.25rem;
 	}
 
 	.paper-grain {
 		position: fixed;
-		z-index: 2;
+		z-index: 0;
 		inset: 0;
-		opacity: 0.2;
+		opacity: 0.16;
 		background-image:
 			radial-gradient(rgba(53, 58, 53, 0.13) 0.5px, transparent 0.75px),
 			radial-gradient(rgba(255, 255, 255, 0.95) 0.5px, transparent 0.8px);
@@ -100,8 +188,33 @@ import Layout from '../layouts/Layout.astro';
 	}
 
 	@media (max-width: 600px) {
+		.home {
+			grid-template-columns: 1fr;
+		}
+
+		.writing-strip {
+			flex-direction: row;
+			align-items: center;
+			padding: 1.25rem 1.375rem;
+			border-right: 0;
+			border-bottom: 1px solid rgba(29, 29, 31, 0.17);
+		}
+
+		.writing-status,
+		.build-status {
+			display: none;
+		}
+
+		.content {
+			padding: 1.375rem;
+		}
+
 		article {
-			width: min(100% - 2.5rem, 52rem);
+			margin-top: clamp(5rem, 19vh, 8rem);
+		}
+
+		.status span {
+			margin-left: 0.75rem;
 		}
 	}
 </style>
