@@ -1,42 +1,10 @@
 {
   "blocks": [
     {
-      "id": "intro-name",
+      "id": "heading-1787574069893",
       "type": "heading",
-      "text": "A creative mind stuck in a logical world.",
+      "text": "wip",
       "size": "xl"
-    },
-    {
-      "id": "heading-1787573995407",
-      "type": "heading",
-      "text": "tests",
-      "size": "xl"
-    },
-    {
-      "id": "text-1787573996926",
-      "type": "text",
-      "text": "Write something here.",
-      "style": "body"
-    },
-    {
-      "id": "image-1787573998174",
-      "type": "image",
-      "text": "",
-      "src": "",
-      "alt": "",
-      "width": "standard"
-    },
-    {
-      "id": "link-1787573998991",
-      "type": "link",
-      "text": "A useful link",
-      "label": "A useful link",
-      "url": "https://"
-    },
-    {
-      "id": "divider-1787574000558",
-      "type": "divider",
-      "text": ""
     }
   ]
 }
