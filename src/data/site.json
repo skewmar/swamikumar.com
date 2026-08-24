@@ -3,20 +3,8 @@
     {
       "id": "intro-name",
       "type": "heading",
-      "text": "Swami Kumar",
-      "size": "xl"
-    },
-    {
-      "id": "intro-line",
-      "type": "text",
       "text": "A creative mind stuck in a logical world.",
-      "style": "lead"
-    },
-    {
-      "id": "intro-soon",
-      "type": "text",
-      "text": "More coming soon.",
-      "style": "meta"
+      "size": "xl"
     }
   ]
 }
