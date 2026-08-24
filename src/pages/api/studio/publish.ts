@@ -20,6 +20,7 @@ function cleanBlock(value: unknown, index: number) {
 	const text = typeof block.text === 'string' ? block.text.trim().slice(0, 5000) : '';
 	const id = typeof block.id === 'string' ? block.id.replace(/[^a-zA-Z0-9-]/g, '').slice(0, 80) : `block-${index}`;
 	const clean: Record<string, string> = { id: id || `block-${index}`, type, text };
+	clean.span = ['4', '6', '8', '12'].includes(String(block.span)) ? String(block.span) : '12';
 	if (type === 'heading') clean.size = block.size === 'large' ? 'large' : 'xl';
 	if (type === 'text') clean.style = block.style === 'meta' ? 'meta' : block.style === 'body' ? 'body' : 'lead';
 	if (type === 'image') {

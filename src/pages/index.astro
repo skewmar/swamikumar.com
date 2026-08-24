@@ -13,13 +13,13 @@ import site from '../data/site.json';
 		<section class="content">
 			<p class="note">notes on crafting, on systems, and in-between spaces</p>
 			<article>
-				{site.blocks.map((block) => (
-					block.type === 'heading' ? <h1 class:list={[`heading-${block.size || 'xl'}`]}>{block.text}</h1> :
-					block.type === 'text' ? <p class:list={['text-block', `text-${block.style || 'lead'}`]}>{block.text}</p> :
-					block.type === 'image' && block.src ? <img class:list={['image-block', `image-${block.width || 'standard'}`]} src={block.src} alt={block.alt || ''} /> :
-					block.type === 'link' && block.url ? <a class="link-block" href={block.url}>{block.label || block.text || block.url}</a> :
-					block.type === 'divider' ? <hr /> : null
-				))}
+				{site.blocks.map((block) => <div class:list={['page-block', `span-${block.span || '12'}`]}>
+					{block.type === 'heading' ? <h1 class:list={[`heading-${block.size || 'xl'}`]}>{block.text}</h1> :
+						block.type === 'text' ? <p class:list={['text-block', `text-${block.style || 'lead'}`]}>{block.text}</p> :
+						block.type === 'image' && block.src ? <img class:list={['image-block', `image-${block.width || 'standard'}`]} src={block.src} alt={block.alt || ''} /> :
+						block.type === 'link' && block.url ? <a class="link-block" href={block.url}>{block.label || block.text || block.url}</a> :
+						block.type === 'divider' ? <hr /> : null}
+				</div>)}
 			</article>
 		</section>
 	</main>
@@ -32,9 +32,9 @@ import site from '../data/site.json';
 	.writing-strip, .content { position: relative; z-index: 1; }.writing-strip { display: flex; flex-direction: column; justify-content: space-between; padding: 1.7rem .9375rem; border-right: 1px solid var(--rule); }
 	.name, .build-status, .note, h1, p, a { font-family: var(--sans); }.name { margin: 0; font-size: .6875rem; font-weight: 670; letter-spacing: -.045em; }.build-status { margin: 0; font-size: .625rem; font-weight: 500; letter-spacing: -.02em; color: var(--muted); }
 	.content { padding: 1.7rem 2.5rem; }.note { margin: 0; padding-bottom: .8125rem; border-bottom: 1px solid var(--rule); font-size: .6875rem; font-weight: 590; letter-spacing: -.032em; color: rgba(29, 29, 31, .86); }
-	article { max-width: 38.125rem; margin: clamp(5.5rem, 18vh, 9.5rem) 0 0; } h1 { margin: 0; font-weight: 610; letter-spacing: -.06em; line-height: 1.03; color: var(--ink); }.heading-xl { font-size: clamp(1.8125rem, 3.15vw, 2.3125rem); }.heading-large { font-size: clamp(1.5rem, 2.5vw, 1.9rem); }
+	article { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 1rem; max-width: 38.125rem; margin: clamp(5.5rem, 18vh, 9.5rem) 0 0; }.page-block { grid-column: span 12; min-width: 0; }.page-block.span-4 { grid-column: span 4; }.page-block.span-6 { grid-column: span 6; }.page-block.span-8 { grid-column: span 8; } h1 { margin: 0; font-weight: 610; letter-spacing: -.06em; line-height: 1.03; color: var(--ink); }.heading-xl { font-size: clamp(1.8125rem, 3.15vw, 2.3125rem); }.heading-large { font-size: clamp(1.5rem, 2.5vw, 1.9rem); }
 	.text-block { max-width: 34rem; margin: .85rem 0 0; letter-spacing: -.018em; color: var(--muted); }.text-lead { font-size: 1.02rem; line-height: 1.45; }.text-body { font-size: .96rem; line-height: 1.55; }.text-meta { margin-top: 2rem; font-size: .7rem; font-weight: 500; letter-spacing: -.01em; }
 	.image-block { display: block; max-width: 100%; height: auto; margin: 2rem 0 0; border-radius: .8rem; }.image-narrow { width: min(100%, 25rem); }.image-standard { width: min(100%, 38rem); }.image-full { width: 100%; }.link-block { display: inline-block; margin-top: 1.5rem; color: var(--ink); font-size: .9rem; text-underline-offset: .18em; } hr { margin: 2rem 0; border: 0; border-top: 1px solid var(--rule); }
 	.paper-grain { position: fixed; z-index: 0; inset: 0; opacity: .16; background-image: radial-gradient(rgba(53, 58, 53, .13) .5px, transparent .75px), radial-gradient(rgba(255, 255, 255, .95) .5px, transparent .8px); background-position: 0 0, 4px 5px; background-size: 7px 7px, 11px 11px; mix-blend-mode: multiply; pointer-events: none; }
-	@media (max-width: 600px) { .home { grid-template-columns: 1fr; }.writing-strip { flex-direction: row; align-items: center; padding: 1.25rem 1.375rem; border-right: 0; border-bottom: 1px solid var(--rule); }.content { padding: 1.375rem; } article { margin-top: clamp(5rem, 19vh, 8rem); } }
+	@media (max-width: 600px) { .home { grid-template-columns: 1fr; }.writing-strip { flex-direction: row; align-items: center; padding: 1.25rem 1.375rem; border-right: 0; border-bottom: 1px solid var(--rule); }.content { padding: 1.375rem; } article { margin-top: clamp(5rem, 19vh, 8rem); }.page-block { grid-column: span 12 !important; } }
 </style>

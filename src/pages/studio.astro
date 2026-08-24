@@ -23,6 +23,7 @@ const errorMessage = error === 'not-authorized'
 			{session ? (
 				<div class="header-actions">
 					<a href="/" target="_blank">View site</a>
+					<button class="grid-toggle" data-grid-toggle aria-pressed="true">Grid on</button>
 					<span class="account">{session.login}</span>
 					<button class="publish" data-publish>Publish</button>
 				</div>
@@ -33,6 +34,7 @@ const errorMessage = error === 'not-authorized'
 			<section class="studio" data-studio>
 				<aside class="library" aria-label="Add blocks">
 					<p class="eyebrow">Add to page</p>
+					<p class="quiet library-intro">Choose a building block.</p>
 					<div class="add-blocks">
 						<button data-add="heading">+ Heading</button>
 						<button data-add="text">+ Text</button>
@@ -73,17 +75,18 @@ const errorMessage = error === 'not-authorized'
 	let blocks = structuredClone(initialBlocks);
 	let selectedId = blocks[0]?.id ?? null;
 	let draggedId = null;
+	let showGrid = true;
 
 	const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;' })[character]);
 	const selectedBlock = () => blocks.find((block) => block.id === selectedId);
 	const setStatus = (message, isError = false) => { status.textContent = message; status.classList.toggle('error', isError); };
 	const makeBlock = (type) => {
 		const id = `${type}-${Date.now()}`;
-		if (type === 'heading') return { id, type, text: 'New heading', size: 'xl' };
-		if (type === 'text') return { id, type, text: 'Write something here.', style: 'body' };
-		if (type === 'image') return { id, type, src: '', alt: '', width: 'standard' };
-		if (type === 'link') return { id, type, text: 'A useful link', label: 'A useful link', url: 'https://' };
-		return { id, type: 'divider', text: '' };
+		if (type === 'heading') return { id, type, text: 'New heading', size: 'xl', span: '12' };
+		if (type === 'text') return { id, type, text: 'Write something here.', style: 'body', span: '8' };
+		if (type === 'image') return { id, type, src: '', alt: '', width: 'standard', span: '8' };
+		if (type === 'link') return { id, type, text: 'A useful link', label: 'A useful link', url: 'https://', span: '6' };
+		return { id, type: 'divider', text: '', span: '12' };
 	};
 	const move = (id, direction) => {
 		const index = blocks.findIndex((block) => block.id === id);
@@ -109,17 +112,19 @@ const errorMessage = error === 'not-authorized'
 	const renderInspector = () => {
 		const block = selectedBlock();
 		if (!block) { inspector.innerHTML = '<p class="eyebrow">Block settings</p><p class="quiet">Select a block to edit it.</p>'; return; }
-		let fields = `<p class="eyebrow">${escapeHtml(block.type)} block</p>`;
+		let fields = `<p class="eyebrow">Selected block</p><p class="block-title">${escapeHtml(block.type)}</p>`;
 		if (block.type === 'heading' || block.type === 'text' || block.type === 'link') fields += `<label>Text<textarea data-field="text">${escapeHtml(block.text)}</textarea></label>`;
 		if (block.type === 'heading') fields += `<label>Size<select data-field="size"><option value="xl" ${block.size === 'xl' ? 'selected' : ''}>Extra large</option><option value="large" ${block.size === 'large' ? 'selected' : ''}>Large</option></select></label>`;
 		if (block.type === 'text') fields += `<label>Style<select data-field="style"><option value="lead" ${block.style === 'lead' ? 'selected' : ''}>Lead</option><option value="body" ${block.style === 'body' ? 'selected' : ''}>Body</option><option value="meta" ${block.style === 'meta' ? 'selected' : ''}>Small note</option></select></label>`;
 		if (block.type === 'image') fields += `<label>Image URL<input data-field="src" value="${escapeHtml(block.src)}" placeholder="https:// or /uploads/"></label><label>Alt text<input data-field="alt" value="${escapeHtml(block.alt)}" placeholder="Describe the image"></label><label>Width<select data-field="width"><option value="narrow" ${block.width === 'narrow' ? 'selected' : ''}>Narrow</option><option value="standard" ${block.width === 'standard' ? 'selected' : ''}>Standard</option><option value="full" ${block.width === 'full' ? 'selected' : ''}>Full width</option></select></label><label class="upload">Upload image<input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" data-upload></label>`;
 		if (block.type === 'link') fields += `<label>Label<input data-field="label" value="${escapeHtml(block.label || '')}"></label><label>URL<input data-field="url" value="${escapeHtml(block.url || '')}"></label>`;
+		if (block.type !== 'divider') fields += `<fieldset class="span-control"><legend>Width on grid</legend><div><button data-span="4" class="${block.span === '4' ? 'active' : ''}">4</button><button data-span="6" class="${block.span === '6' ? 'active' : ''}">6</button><button data-span="8" class="${block.span === '8' || !block.span ? 'active' : ''}">8</button><button data-span="12" class="${block.span === '12' ? 'active' : ''}">12</button></div></fieldset>`;
 		fields += '<button class="delete" data-delete>Delete block</button>';
 		inspector.innerHTML = fields;
 	};
 	const renderCanvas = () => {
-		canvas.innerHTML = blocks.map((block, index) => `<article class="block ${block.id === selectedId ? 'selected' : ''}" draggable="true" data-id="${escapeHtml(block.id)}"><div class="block-bar"><span>${index + 1}. ${escapeHtml(block.type)}</span><span class="move-buttons"><button data-move="up" aria-label="Move up">↑</button><button data-move="down" aria-label="Move down">↓</button></span></div><div class="block-preview">${preview(block)}</div></article>`).join('');
+		canvas.classList.toggle('grid-on', showGrid);
+		canvas.innerHTML = blocks.map((block, index) => `<article class="block ${block.id === selectedId ? 'selected' : ''}" draggable="true" data-id="${escapeHtml(block.id)}"><div class="block-bar"><span class="drag-handle" aria-hidden="true">⠿</span><span>${index + 1}. ${escapeHtml(block.type)}</span><span class="move-buttons"><button data-move="up" aria-label="Move up">↑</button><button data-move="down" aria-label="Move down">↓</button></span></div><div class="block-preview"><div class="preview-inner span-${escapeHtml(block.span || '8')}">${preview(block)}</div></div></article>`).join('');
 	};
 	const render = () => {
 		renderCanvas();
@@ -155,7 +160,8 @@ const errorMessage = error === 'not-authorized'
 		const data = await response.json(); if (data.error) { setStatus(data.error, true); return; }
 		update('src', data.url, true); setStatus('Image uploaded. Publish to make it live.');
 	});
-	inspector.addEventListener('click', (event) => { if (event.target.closest('[data-delete]')) { blocks = blocks.filter((block) => block.id !== selectedId); selectedId = blocks[0]?.id ?? null; render(); } });
+	inspector.addEventListener('click', (event) => { const span = event.target.closest('[data-span]')?.dataset.span; if (span) { update('span', span, true); return; } if (event.target.closest('[data-delete]')) { blocks = blocks.filter((block) => block.id !== selectedId); selectedId = blocks[0]?.id ?? null; render(); } });
+	document.querySelector('[data-grid-toggle]').addEventListener('click', (event) => { showGrid = !showGrid; event.currentTarget.setAttribute('aria-pressed', String(showGrid)); event.currentTarget.textContent = showGrid ? 'Grid on' : 'Grid off'; renderCanvas(); });
 	publish.addEventListener('click', async () => {
 		publish.disabled = true; setStatus('Publishing your changes...');
 		try { const response = await fetch('/api/studio/publish', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ blocks }) }); const data = await response.json(); if (data.error) throw new Error(data.error); setStatus(data.ok); } catch (error) { setStatus(error.message || 'Unable to publish.', true); } finally { publish.disabled = false; }
@@ -167,17 +173,17 @@ const errorMessage = error === 'not-authorized'
 	:root { --ink: #1d1d1f; --muted: rgba(60,60,67,.72); --line: rgba(60,60,67,.16); --paper: #f6f3ed; --blue: #007aff; }
 	.studio-shell { min-height: 100svh; background: linear-gradient(135deg, #eaf0ed, #f6f3ed 48%, #e9edef); color: var(--ink); }
 	.studio-header { height: 3.75rem; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; border-bottom: 1px solid var(--line); background: rgba(246,243,237,.78); backdrop-filter: blur(16px); }
-	.header-actions { display: flex; align-items: center; gap: .9rem; }.header-actions > a { color: var(--muted); font-size: .78rem; text-underline-offset: .16em; }
+	.header-actions { display: flex; align-items: center; gap: .9rem; }.header-actions > a { color: var(--muted); font-size: .78rem; text-underline-offset: .16em; }.grid-toggle { border: 1px solid var(--line); border-radius: .4rem; padding: .35rem .5rem; background: transparent; color: var(--muted); font: 600 .7rem inherit; cursor: pointer; }.grid-toggle[aria-pressed="true"] { color: var(--ink); background: rgba(255,255,255,.6); }
 	.wordmark, .account, .eyebrow, .status { font-size: .78rem; font-weight: 600; letter-spacing: -.01em; }
 	.wordmark { color: var(--ink); text-decoration: none; }.account, .quiet, .status { color: var(--muted); }
 	.studio { display: grid; grid-template-columns: 13.5rem minmax(20rem, 1fr) 16rem; min-height: calc(100svh - 3.75rem); }
 	.library, .inspector { padding: 1.25rem; background: rgba(246,243,237,.55); }.library { border-right: 1px solid var(--line); }.inspector { border-left: 1px solid var(--line); }
-	h1 { margin: .35rem 0 .75rem; font-size: 1.55rem; line-height: 1.1; letter-spacing: -.04em; }.quiet { margin: 0; font-size: .9rem; line-height: 1.45; }
+	h1 { margin: .35rem 0 .75rem; font-size: 1.55rem; line-height: 1.1; letter-spacing: -.04em; }.quiet { margin: 0; font-size: .9rem; line-height: 1.45; }.library-intro { margin-top: .35rem; font-size: .78rem; }
 	.add-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem; margin: 1rem 0; }.add-blocks button, .move-buttons button { border: 1px solid var(--line); background: rgba(255,255,255,.54); color: var(--ink); cursor: pointer; }.add-blocks button { padding: .58rem; border-radius: .45rem; text-align: left; font: inherit; font-size: .77rem; }.add-blocks button:hover { background: #fff; }.library-note { margin-top: 1.2rem; font-size: .78rem; }
 	.publish, .signin { display: inline-block; border: 0; border-radius: .48rem; padding: .58rem .78rem; background: var(--ink); color: white; font: 600 .78rem inherit; text-decoration: none; cursor: pointer; }.publish:disabled { opacity: .55; cursor: wait; }.status { margin: 0; line-height: 1.35; text-align: right; }.error { color: #bb2a2a !important; }
-	.canvas-wrap { padding: clamp(1rem, 3vw, 2.5rem); background: rgba(255,255,255,.12); }.canvas-label { display: flex; justify-content: space-between; gap: 1rem; max-width: 44rem; margin: 0 auto .65rem; color: var(--muted); font-size: .72rem; font-weight: 600; }.canvas { max-width: 44rem; min-height: 35rem; margin: 0 auto; padding: clamp(1.25rem,4vw,3.5rem); box-sizing: border-box; background: rgba(246,243,237,.9); border: 1px solid rgba(60,60,67,.1); box-shadow: 0 18px 50px rgba(45,50,53,.1); }
-	.block { margin: 0 0 .65rem; border: 1px solid transparent; border-radius: .4rem; cursor: grab; }.block:hover { border-color: rgba(60,60,67,.13); }.block.selected { border-color: rgba(0,122,255,.46); box-shadow: 0 0 0 3px rgba(0,122,255,.07); }.block-bar { display: flex; justify-content: space-between; padding: .25rem .4rem; color: var(--muted); font-size: .65rem; text-transform: capitalize; }.move-buttons { display: flex; gap: .2rem; }.move-buttons button { width: 1.35rem; height: 1.2rem; border-radius: .25rem; }.block-preview { padding: .4rem; }.preview-heading { margin: 0; font-size: 2.8rem; letter-spacing: -.05em; line-height: 1.06; }.preview-heading.small { font-size: 2rem; }.preview-text { max-width: 34rem; margin: 0; color: var(--muted); white-space: pre-wrap; line-height: 1.5; }.preview-text.lead { font-size: 1.05rem; }.preview-text.meta { font-size: .8rem; }.preview-image { display: block; max-width: 100%; margin: 0; border-radius: .7rem; }.preview-image.narrow { width: 20rem; }.preview-image.standard { width: 34rem; }.preview-image.full { width: 100%; }.image-placeholder { display: grid; min-height: 9rem; place-items: center; background: #e6e4df; color: var(--muted); border-radius: .7rem; font-size: .85rem; }.preview-link { color: var(--ink); text-underline-offset: .18em; }.preview-rule { border: 0; border-top: 1px solid var(--line); }
-	.inspector label { display: grid; gap: .35rem; margin-top: 1rem; color: var(--muted); font-size: .75rem; font-weight: 600; }.inspector input, .inspector textarea, .inspector select { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: .4rem; padding: .55rem; background: rgba(255,255,255,.75); color: var(--ink); font: .85rem inherit; }.inspector textarea { min-height: 7rem; resize: vertical; }.upload input { padding: .35rem; }.delete { margin-top: 1.5rem; border: 0; background: transparent; color: #bb2a2a; font: .8rem inherit; cursor: pointer; }
+	.canvas-wrap { padding: clamp(1rem, 3vw, 2.5rem); background: rgba(255,255,255,.12); }.canvas-label { display: flex; justify-content: space-between; gap: 1rem; max-width: 44rem; margin: 0 auto .65rem; color: var(--muted); font-size: .72rem; font-weight: 600; }.canvas { max-width: 44rem; min-height: 35rem; margin: 0 auto; padding: clamp(1.25rem,4vw,3.5rem); box-sizing: border-box; background: rgba(246,243,237,.9); border: 1px solid rgba(60,60,67,.1); box-shadow: 0 18px 50px rgba(45,50,53,.1); }.canvas.grid-on { background-image: linear-gradient(to right, rgba(29,29,31,.055) 1px, transparent 1px), linear-gradient(to bottom, rgba(29,29,31,.028) 1px, transparent 1px); background-size: calc(100% / 12) 8px; }
+	.block { margin: 0 0 .85rem; border: 1px dashed rgba(60,60,67,.22); border-radius: .4rem; cursor: grab; background: rgba(246,243,237,.36); }.block:hover { border-color: rgba(60,60,67,.42); }.block.selected { border: 1px solid var(--blue); box-shadow: 0 0 0 3px rgba(0,122,255,.12); background: rgba(255,255,255,.7); }.block-bar { display: flex; align-items: center; gap: .32rem; padding: .25rem .4rem; color: var(--muted); font-size: .65rem; text-transform: capitalize; }.drag-handle { font-size: .9rem; letter-spacing: -.14em; cursor: grab; }.move-buttons { display: flex; gap: .2rem; margin-left: auto; }.move-buttons button { width: 1.35rem; height: 1.2rem; border-radius: .25rem; }.block-preview { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: .55rem; padding: .55rem; min-height: 2rem; }.canvas.grid-on .block-preview { background-image: linear-gradient(to right, rgba(0,122,255,.14) 1px, transparent 1px); background-size: calc(100% / 12) 100%; }.preview-inner { grid-column: span 8; min-width: 0; }.preview-inner.span-4 { grid-column: span 4; }.preview-inner.span-6 { grid-column: span 6; }.preview-inner.span-12 { grid-column: span 12; }.preview-heading { margin: 0; font-size: 2.8rem; letter-spacing: -.05em; line-height: 1.06; }.preview-heading.small { font-size: 2rem; }.preview-text { max-width: 34rem; margin: 0; color: var(--muted); white-space: pre-wrap; line-height: 1.5; }.preview-text.lead { font-size: 1.05rem; }.preview-text.meta { font-size: .8rem; }.preview-image { display: block; max-width: 100%; margin: 0; border-radius: .7rem; }.preview-image.narrow { width: 100%; }.preview-image.standard, .preview-image.full { width: 100%; }.image-placeholder { display: grid; min-height: 9rem; place-items: center; background: #e6e4df; color: var(--muted); border-radius: .7rem; font-size: .85rem; }.preview-link { color: var(--ink); text-underline-offset: .18em; }.preview-rule { border: 0; border-top: 1px solid var(--line); }
+	.block-title { margin: .25rem 0 .85rem; color: var(--ink); font-size: 1.05rem; font-weight: 650; text-transform: capitalize; }.inspector label { display: grid; gap: .35rem; margin-top: 1rem; color: var(--muted); font-size: .75rem; font-weight: 600; }.inspector input, .inspector textarea, .inspector select { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: .4rem; padding: .55rem; background: rgba(255,255,255,.75); color: var(--ink); font: .85rem inherit; }.inspector textarea { min-height: 7rem; resize: vertical; }.upload input { padding: .35rem; }.span-control { margin: 1.25rem 0 0; padding: 0; border: 0; }.span-control legend { margin-bottom: .5rem; color: var(--muted); font-size: .75rem; font-weight: 600; }.span-control div { display: grid; grid-template-columns: repeat(4, 1fr); gap: .3rem; }.span-control button { border: 1px solid var(--line); border-radius: .35rem; padding: .45rem 0; background: rgba(255,255,255,.55); color: var(--muted); font: 600 .72rem inherit; cursor: pointer; }.span-control button.active { border-color: var(--blue); background: rgba(0,122,255,.1); color: var(--blue); }.delete { margin-top: 1.5rem; border: 0; background: transparent; color: #bb2a2a; font: .8rem inherit; cursor: pointer; }
 	.signin-card { width: min(100% - 3rem, 27rem); margin: 14vh auto; padding: 2.2rem; background: rgba(246,243,237,.78); box-shadow: 0 24px 65px rgba(45,50,53,.12); border-radius: 1rem; }.signin-card > p:not(.eyebrow):not(.error) { color: var(--muted); line-height: 1.5; }.signin { margin-top: 1rem; }
 	@media (max-width: 900px) { .studio { grid-template-columns: 13rem minmax(0,1fr); }.inspector { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--line); }.inspector label { max-width: 32rem; } }
 	@media (max-width: 620px) { .studio { grid-template-columns: 1fr; }.library { border-right: 0; border-bottom: 1px solid var(--line); }.add-blocks { grid-template-columns: 1fr 1fr; }.canvas-wrap { padding: 1rem; }.canvas { min-height: 25rem; padding: 1.25rem; }.preview-heading { font-size: 2.1rem; } }
