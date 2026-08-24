@@ -1,107 +1,41 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import site from '../data/site.json';
 ---
 
 <Layout>
 	<main class="note">
 		<div class="paper-grain" aria-hidden="true"></div>
-
 		<article>
-			<header>
-				<h1>Swami Kumar</h1>
-				<p class="summary">A creative mind stuck in a logical world.</p>
-			</header>
-
-			<footer>
-				<p>More coming soon.</p>
-			</footer>
+			{site.blocks.map((block) => (
+				block.type === 'heading' ? <h1 class:list={[`heading-${block.size || 'xl'}`]}>{block.text}</h1> :
+				block.type === 'text' ? <p class:list={['text-block', `text-${block.style || 'lead'}`]}>{block.text}</p> :
+				block.type === 'image' && block.src ? <img class:list={['image-block', `image-${block.width || 'standard'}`]} src={block.src} alt={block.alt || ''} /> :
+				block.type === 'link' && block.url ? <a class="link-block" href={block.url}>{block.label || block.text || block.url}</a> :
+				block.type === 'divider' ? <hr /> : null
+			))}
 		</article>
 	</main>
 </Layout>
 
 <style>
-	:root {
-		--ink: #1d1d1f;
-		--muted: rgba(60, 60, 67, 0.72);
-		--paper: #f6f3ed;
-		--sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
-	}
-
-	.note {
-		position: relative;
-		box-sizing: border-box;
-		min-height: 100svh;
-		overflow: hidden;
-		background:
-			radial-gradient(ellipse at 92% 0%, rgba(190, 209, 215, 0.36), transparent 34rem),
-			radial-gradient(ellipse at 0% 100%, rgba(205, 199, 176, 0.34), transparent 32rem),
-			var(--paper);
-	}
-
-	article {
-		position: relative;
-		z-index: 1;
-		width: min(100% - 3rem, 52rem);
-		margin: 0 auto;
-		padding: clamp(2.25rem, 7vh, 5.5rem) 0 2.5rem;
-	}
-
-	footer p {
-		font-family: var(--sans);
-		font-size: 0.8rem;
-		font-weight: 500;
-		letter-spacing: -0.01em;
-		color: var(--muted);
-	}
-
-	h1,
-	p {
-		font-family: var(--sans);
-	}
-
-	h1 {
-		margin: 0;
-		font-size: clamp(2rem, 5vw, 3rem);
-		font-weight: 700;
-		letter-spacing: -0.045em;
-		line-height: 1.08;
-		color: var(--ink);
-	}
-
-	.summary {
-		max-width: 34rem;
-		margin: 0.65rem 0 0;
-		font-size: 1.0625rem;
-		letter-spacing: -0.013em;
-		line-height: 1.45;
-		color: var(--muted);
-	}
-
-	footer {
-		margin-top: 2rem;
-	}
-
-	footer p {
-		margin: 0;
-	}
-
-	.paper-grain {
-		position: fixed;
-		z-index: 2;
-		inset: 0;
-		opacity: 0.2;
-		background-image:
-			radial-gradient(rgba(53, 58, 53, 0.13) 0.5px, transparent 0.75px),
-			radial-gradient(rgba(255, 255, 255, 0.95) 0.5px, transparent 0.8px);
-		background-position: 0 0, 4px 5px;
-		background-size: 7px 7px, 11px 11px;
-		mix-blend-mode: multiply;
-		pointer-events: none;
-	}
-
-	@media (max-width: 600px) {
-		article {
-			width: min(100% - 2.5rem, 52rem);
-		}
-	}
+	:root { --ink: #1d1d1f; --muted: rgba(60, 60, 67, 0.72); --rule: rgba(60, 60, 67, 0.16); --paper: #f6f3ed; }
+	.note { position: relative; box-sizing: border-box; min-height: 100svh; overflow: hidden; background: radial-gradient(ellipse at 92% 0%, rgba(190, 209, 215, .36), transparent 34rem), radial-gradient(ellipse at 0% 100%, rgba(205, 199, 176, .34), transparent 32rem), var(--paper); }
+	article { position: relative; z-index: 1; width: min(100% - 3rem, 52rem); margin: 0 auto; padding: clamp(2.25rem, 7vh, 5.5rem) 0 2.5rem; }
+	h1, p, a { font-family: inherit; }
+	h1 { margin: 0; font-weight: 700; letter-spacing: -.045em; line-height: 1.08; color: var(--ink); }
+	.heading-xl { font-size: clamp(2rem, 5vw, 3rem); }
+	.heading-large { font-size: clamp(1.5rem, 3vw, 2.1rem); }
+	.text-block { max-width: 38rem; margin: .7rem 0 0; letter-spacing: -.013em; color: var(--muted); }
+	.text-lead { font-size: 1.0625rem; line-height: 1.45; }
+	.text-body { font-size: 1rem; line-height: 1.55; }
+	.text-meta { margin-top: 2rem; font-size: .8rem; font-weight: 500; letter-spacing: -.01em; }
+	.image-block { display: block; max-width: 100%; height: auto; margin: 2rem 0 0; border-radius: 1rem; }
+	.image-narrow { width: min(100%, 25rem); }
+	.image-standard { width: min(100%, 38rem); }
+	.image-full { width: 100%; }
+	.link-block { display: inline-block; margin-top: 1.5rem; color: var(--ink); font-size: 1rem; text-underline-offset: .18em; }
+	hr { margin: 2rem 0; border: 0; border-top: 1px solid var(--rule); }
+	.paper-grain { position: fixed; z-index: 2; inset: 0; opacity: .2; background-image: radial-gradient(rgba(53, 58, 53, .13) .5px, transparent .75px), radial-gradient(rgba(255, 255, 255, .95) .5px, transparent .8px); background-position: 0 0, 4px 5px; background-size: 7px 7px, 11px 11px; mix-blend-mode: multiply; pointer-events: none; }
+	@media (max-width: 600px) { article { width: min(100% - 2.5rem, 52rem); } }
 </style>
