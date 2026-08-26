@@ -16,7 +16,6 @@ import Layout from '../layouts/Layout.astro';
 	:root {
 		--ink: #1d1d1f;
 		--muted: rgba(60, 60, 67, 0.72);
-		--paper: #f6f4ed;
 		--sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
 	}
 
@@ -28,8 +27,8 @@ import Layout from '../layouts/Layout.astro';
 
 	.content {
 		max-width: 38rem;
-		padding: clamp(4.5rem, 15vh, 9rem) 1.5rem;
 		margin-left: clamp(1rem, 8vw, 9rem);
+		padding: clamp(4.5rem, 15vh, 9rem) 1.5rem;
 		font-family: var(--sans);
 	}
 
@@ -60,8 +59,8 @@ import Layout from '../layouts/Layout.astro';
 
 	@media (max-width: 600px) {
 		.content {
-			padding: 3.5rem 1.375rem;
 			margin-left: 0;
+			padding: 3.5rem 1.375rem;
 		}
 	}
 </style>
