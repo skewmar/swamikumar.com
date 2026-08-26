@@ -31,12 +31,22 @@ import Layout from '../layouts/Layout.astro';
 				<p class="intro">A creative mind stuck in a logical world.</p>
 				<p class="note-copy">Notes on crafting, systems, and in-between spaces.</p>
 			</article>
+			<span class="resize-handle north-west" aria-hidden="true"></span>
+			<span class="resize-handle north-east" aria-hidden="true"></span>
+			<span class="resize-handle south-west" aria-hidden="true"></span>
+			<span class="resize-handle south-east" aria-hidden="true"></span>
 		</section>
 
 		<div class="notes-bay" aria-label="Notes dock">
-			<label for="note-open" aria-label="Open note" title="Open note">
+			<span class="dock-app finder" aria-hidden="true"></span>
+			<span class="dock-app launch" aria-hidden="true"></span>
+			<label class="dock-app notes-app" for="note-open" aria-label="Open note" title="Open note">
 				<span class="notes-icon" aria-hidden="true"></span>
 			</label>
+			<span class="dock-app photos" aria-hidden="true"></span>
+			<span class="dock-app music" aria-hidden="true"></span>
+			<span class="dock-separator" aria-hidden="true"></span>
+			<span class="dock-app settings" aria-hidden="true"></span>
 		</div>
 
 		<p class="wallpaper-credit">
@@ -44,6 +54,74 @@ import Layout from '../layouts/Layout.astro';
 		</p>
 	</main>
 </Layout>
+
+<script>
+	const noteWindow = document.querySelector('.notes-window');
+	const restingState = document.querySelector('#note-resting');
+	const openState = document.querySelector('#note-open');
+	const resizeHandles = document.querySelectorAll('.resize-handle');
+
+	const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+	resizeHandles.forEach((handle) => {
+		handle.addEventListener('pointerdown', (event) => {
+			if (!noteWindow || !restingState?.checked) return;
+
+			event.preventDefault();
+			const edge = [...handle.classList].find((name) => ['north-west', 'north-east', 'south-west', 'south-east'].includes(name));
+			const startingRect = noteWindow.getBoundingClientRect();
+			const startX = event.clientX;
+			const startY = event.clientY;
+			const minWidth = 420;
+			const minHeight = 300;
+
+			noteWindow.classList.add('is-resized');
+			noteWindow.style.left = `${startingRect.left}px`;
+			noteWindow.style.top = `${startingRect.top}px`;
+			noteWindow.style.width = `${startingRect.width}px`;
+			noteWindow.style.height = `${startingRect.height}px`;
+
+			const resize = (moveEvent) => {
+				const shiftX = moveEvent.clientX - startX;
+				const shiftY = moveEvent.clientY - startY;
+				let width = startingRect.width;
+				let height = startingRect.height;
+				let left = startingRect.left;
+				let top = startingRect.top;
+
+				if (edge?.includes('east')) width = clamp(startingRect.width + shiftX, minWidth, window.innerWidth - startingRect.left);
+				if (edge?.includes('south')) height = clamp(startingRect.height + shiftY, minHeight, window.innerHeight - startingRect.top);
+				if (edge?.includes('west')) {
+					left = clamp(startingRect.left + shiftX, 0, startingRect.right - minWidth);
+					width = startingRect.right - left;
+				}
+				if (edge?.includes('north')) {
+					top = clamp(startingRect.top + shiftY, 0, startingRect.bottom - minHeight);
+					height = startingRect.bottom - top;
+				}
+
+				noteWindow.style.left = `${left}px`;
+				noteWindow.style.top = `${top}px`;
+				noteWindow.style.width = `${width}px`;
+				noteWindow.style.height = `${height}px`;
+			};
+
+			const stop = () => {
+				document.removeEventListener('pointermove', resize);
+				document.removeEventListener('pointerup', stop);
+			};
+
+			document.addEventListener('pointermove', resize);
+			document.addEventListener('pointerup', stop);
+		});
+	});
+
+	openState?.addEventListener('change', () => {
+		if (!noteWindow || !openState.checked) return;
+		noteWindow.classList.remove('is-resized');
+		['left', 'top', 'width', 'height'].forEach((property) => noteWindow.style.removeProperty(property));
+	});
+</script>
 
 <style>
 	:root {
@@ -71,6 +149,7 @@ import Layout from '../layouts/Layout.astro';
 	}
 
 	.notes-window {
+		position: relative;
 		display: grid;
 		grid-template-columns: 17.5rem minmax(0, 1fr);
 		min-height: 100svh;
@@ -236,9 +315,30 @@ import Layout from '../layouts/Layout.astro';
 	#note-resting:checked ~ .notes-window .note-page { padding-top: clamp(3rem, 9vh, 5.75rem); }
 	#note-closed:checked ~ .notes-window { display: none; }
 
+	.notes-window.is-resized {
+		transform: none !important;
+	}
+
+	.resize-handle {
+		display: none;
+		position: absolute;
+		z-index: 4;
+		width: 1rem;
+		height: 1rem;
+		touch-action: none;
+	}
+
+	#note-resting:checked ~ .notes-window .resize-handle { display: block; }
+	.north-west { top: -0.375rem; left: -0.375rem; cursor: nwse-resize; }
+	.north-east { top: -0.375rem; right: -0.375rem; cursor: nesw-resize; }
+	.south-west { bottom: -0.375rem; left: -0.375rem; cursor: nesw-resize; }
+	.south-east { right: -0.375rem; bottom: -0.375rem; cursor: nwse-resize; }
+
 	#note-resting:checked ~ .notes-bay,
 	#note-closed:checked ~ .notes-bay {
-		display: block;
+		display: flex;
+		align-items: flex-end;
+		gap: 0.45rem;
 		position: fixed;
 		z-index: 2;
 		bottom: 1.25rem;
@@ -252,15 +352,38 @@ import Layout from '../layouts/Layout.astro';
 		backdrop-filter: blur(18px) saturate(1.2);
 	}
 
-	.notes-bay label {
+	.dock-app {
 		display: grid;
 		place-items: center;
-		width: 3.25rem;
-		height: 3.25rem;
-		border-radius: 0.7rem;
+		position: relative;
+		width: 3rem;
+		height: 3rem;
+		border-radius: 0.65rem;
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 0.1875rem 0.375rem rgba(0, 0, 0, 0.14);
+		transition: transform 160ms ease;
+	}
+
+	.dock-app:hover,
+	.dock-app:focus-visible {
+		transform: translateY(-0.5rem) scale(1.12);
+	}
+
+	.notes-app {
 		cursor: pointer;
 		background: linear-gradient(180deg, #fff 0 17%, #f8dd69 17% 28%, #fff 28%);
-		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 0.1875rem 0.375rem rgba(0, 0, 0, 0.14);
+	}
+
+	.finder { background: linear-gradient(90deg, #9bd3ff 0 49%, #e9f5ff 49%); }
+	.launch { background: linear-gradient(135deg, #e94b43, #ff9d45); }
+	.photos { background: conic-gradient(#ee665e, #f6c75b, #74bf79, #61aed8, #b585dc, #ee665e); }
+	.music { background: linear-gradient(135deg, #ff6f77, #e5325f); }
+	.settings { background: radial-gradient(circle, #c5c8cd 0 28%, #757b84 29% 40%, #d8dade 41% 60%, #737981 61%); }
+
+	.dock-separator {
+		width: 1px;
+		height: 2.4rem;
+		margin: 0 0.075rem;
+		background: rgba(0, 0, 0, 0.16);
 	}
 
 	.notes-icon {
