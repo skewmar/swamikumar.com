@@ -540,6 +540,7 @@ import Layout from '../layouts/Layout.astro';
 	.notes-bay,
 	.wallpaper-credit { display: none; }
 
+	.desktop:has(#note-open:checked),
 	.desktop:has(#note-resting:checked),
 	.desktop:has(#note-closed:checked) {
 		background:
@@ -547,6 +548,7 @@ import Layout from '../layouts/Layout.astro';
 			url('/images/tokumeien-zen-garden.jpg') center / cover no-repeat;
 	}
 
+	#note-open:checked ~ .notes-window,
 	#note-resting:checked ~ .notes-window,
 	#note-closed:checked ~ .notes-window {
 		position: absolute;
@@ -558,11 +560,21 @@ import Layout from '../layouts/Layout.astro';
 		box-shadow: 0 1.75rem 4.75rem rgba(16, 18, 13, 0.35), 0 0.125rem 0.5rem rgba(16, 18, 13, 0.2);
 	}
 
-	#note-resting:checked ~ .notes-window {
-		top: clamp(2.5rem, 8vh, 6rem);
+	#note-open:checked ~ .notes-window {
+		top: clamp(1.5rem, 5vh, 3.75rem);
 		left: 50%;
-		width: min(76vw, 68rem);
-		height: min(72svh, 46rem);
+		width: min(82vw, 78rem);
+		height: min(82svh, 52rem);
+		min-width: 26.25rem;
+		min-height: 18.75rem;
+		transform: translateX(-50%);
+	}
+
+	#note-resting:checked ~ .notes-window {
+		top: clamp(3.25rem, 10vh, 7rem);
+		left: 50%;
+		width: min(66vw, 60rem);
+		height: min(62svh, 40rem);
 		min-width: 26.25rem;
 		min-height: 18.75rem;
 		resize: both;
@@ -691,6 +703,13 @@ import Layout from '../layouts/Layout.astro';
 		}
 		.gallery-preview { grid-column: 1; grid-row: 3; }
 		.sidebar-resize { display: none; }
+		#note-open:checked ~ .notes-window {
+			top: 1rem;
+			width: calc(100vw - 2rem);
+			height: calc(100svh - 2rem);
+			min-width: 0;
+			min-height: 0;
+		}
 		#note-resting:checked ~ .notes-window {
 			top: 2rem;
 			width: calc(100vw - 2rem);
