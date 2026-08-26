@@ -51,11 +51,11 @@ import Layout from '../layouts/Layout.astro';
 				<p class="note-copy">Notes on crafting, systems, and in-between spaces.</p>
 			</article>
 			<section class="gallery-preview" aria-label="Gallery preview">
-				<article class="gallery-card">
+				<button class="gallery-card" type="button" aria-label="Open the swami kumar note">
 					<p>August 2026</p>
 					<h2>swami kumar</h2>
 					<span>A creative mind stuck in a logical world.</span>
-				</article>
+				</button>
 			</section>
 			<span class="sidebar-resize" aria-hidden="true"></span>
 			<span class="resize-handle north-west" aria-hidden="true"></span>
@@ -93,6 +93,7 @@ import Layout from '../layouts/Layout.astro';
 	const moreButton = document.querySelector('.more-button');
 	const notesMenu = document.querySelector('.notes-menu');
 	const menuWrap = document.querySelector('.notes-menu-wrap');
+	const galleryCard = document.querySelector('.gallery-card');
 
 	const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
@@ -213,12 +214,20 @@ import Layout from '../layouts/Layout.astro';
 		moreButton.setAttribute('aria-expanded', String(willOpen));
 	});
 
-	notesMenu?.querySelector('[data-menu-action="gallery"]')?.addEventListener('click', (event) => {
+	const setGalleryView = (active) => {
 		if (!noteWindow) return;
-		noteWindow.classList.toggle('gallery-active');
-		event.currentTarget.textContent = noteWindow.classList.contains('gallery-active') ? 'View as List' : 'View as Gallery';
+		noteWindow.classList.toggle('gallery-active', active);
+		const galleryAction = notesMenu?.querySelector('[data-menu-action="gallery"]');
+		if (galleryAction) galleryAction.textContent = active ? 'View as List' : 'View as Gallery';
+	};
+
+	notesMenu?.querySelector('[data-menu-action="gallery"]')?.addEventListener('click', () => {
+		if (!noteWindow) return;
+		setGalleryView(!noteWindow.classList.contains('gallery-active'));
 		closeMenu();
 	});
+
+	galleryCard?.addEventListener('click', () => setGalleryView(false));
 
 	notesMenu?.querySelectorAll('[data-menu-submenu]').forEach((button) => {
 		button.addEventListener('click', () => {
@@ -486,6 +495,21 @@ import Layout from '../layouts/Layout.astro';
 	.intro { margin-top: 2.25rem; }
 	.note-copy { margin-top: 0.5rem; }
 
+	.note-page a {
+		border-radius: 0.2rem;
+		color: #7a4b00;
+		background: linear-gradient(180deg, transparent 45%, rgba(255, 213, 89, 0.74) 45%);
+		text-decoration: none;
+		text-underline-offset: 0.14em;
+	}
+
+	.note-page a:hover,
+	.note-page a:focus-visible {
+		background: #ffe28a;
+		outline: 0;
+		text-decoration: underline;
+	}
+
 	.gallery-preview {
 		display: none;
 		grid-column: 2;
@@ -497,11 +521,23 @@ import Layout from '../layouts/Layout.astro';
 	}
 
 	.gallery-card {
+		box-sizing: border-box;
+		width: 100%;
 		padding: 1rem;
 		border: 1px solid rgba(60, 60, 67, 0.14);
 		border-radius: 0.65rem;
 		background: linear-gradient(145deg, #fff, #f2f2f6);
+		color: var(--ink);
+		font: inherit;
+		text-align: left;
 		box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+		cursor: pointer;
+	}
+
+	.gallery-card:hover,
+	.gallery-card:focus-visible {
+		border-color: rgba(60, 60, 67, 0.28);
+		box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.09);
 	}
 
 	.gallery-card p,
