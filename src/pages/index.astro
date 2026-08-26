@@ -3,30 +3,27 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-	<main class="notes">
-		<input class="view-input" type="radio" name="view" id="note-view" checked />
-		<input class="view-input" type="radio" name="view" id="things-view" />
-		<aside class="sidebar" aria-label="Notes">
-			<div class="sidebar-heading">
-				<div class="window-controls" aria-label="View controls">
-					<label class="window-dot red" for="note-view" aria-label="Show note" title="Show note"></label>
-					<span class="window-dot yellow" aria-hidden="true"></span>
-					<label class="window-dot green" for="things-view" aria-label="Show images" title="Show images"></label>
-				</div>
-				<span aria-hidden="true">•••</span>
-			</div>
-			<p class="section-label">notes</p>
-			<div class="selected-note">
-				<p>A creative mind</p>
-				<span>in a logical world</span>
-			</div>
-		</aside>
+	<main class="desktop">
+		<input class="window-state" type="radio" name="window-state" id="note-open" checked />
+		<input class="window-state" type="radio" name="window-state" id="note-resting" />
+		<input class="window-state" type="radio" name="window-state" id="note-closed" />
 
-		<section class="workspace">
-			<nav class="view-toggle" aria-label="View">
-				<label for="note-view">note</label>
-				<label for="things-view">things</label>
-			</nav>
+		<section class="notes-window" aria-label="Swami Kumar’s note">
+			<aside class="sidebar" aria-label="Notes">
+				<div class="sidebar-heading">
+					<div class="window-controls" aria-label="Window controls">
+						<label class="window-dot red" for="note-closed" aria-label="Close note" title="Close note"></label>
+						<label class="window-dot yellow minimize" for="note-resting" aria-label="Minimize note" title="Minimize note"></label>
+						<label class="window-dot yellow maximize" for="note-open" aria-label="Maximize note" title="Maximize note"></label>
+					</div>
+					<span aria-hidden="true">•••</span>
+				</div>
+				<p class="section-label">notes</p>
+				<div class="selected-note">
+					<p>A creative mind</p>
+					<span>in a logical world</span>
+				</div>
+			</aside>
 
 			<article class="note-page">
 				<p class="date">August 2026</p>
@@ -34,32 +31,17 @@ import Layout from '../layouts/Layout.astro';
 				<p class="intro">A creative mind stuck in a logical world.</p>
 				<p class="note-copy">Notes on crafting, systems, and in-between spaces.</p>
 			</article>
-
-			<section class="things-page" aria-label="Things">
-				<p class="date">A small visual shelf</p>
-				<h2>things</h2>
-				<div class="visual-grid">
-					<figure class="visual-card">
-						<div class="image-placeholder" role="img" aria-label="Placeholder for a high-resolution image">
-							<span>high-resolution image</span>
-						</div>
-						<figcaption>image placeholder</figcaption>
-					</figure>
-					<figure class="visual-card">
-						<div class="image-placeholder second" role="img" aria-label="Placeholder for a second high-resolution image">
-							<span>high-resolution image</span>
-						</div>
-						<figcaption>image placeholder</figcaption>
-					</figure>
-					<div class="material-card">
-						<span class="material-dot blue"></span>
-						<span class="material-dot peach"></span>
-						<span class="material-dot graphite"></span>
-						<p>images, fragments, and future experiments.</p>
-					</div>
-				</div>
-			</section>
 		</section>
+
+		<div class="notes-bay" aria-label="Notes dock">
+			<label for="note-open" aria-label="Open note" title="Open note">
+				<span class="notes-icon" aria-hidden="true"></span>
+			</label>
+		</div>
+
+		<p class="wallpaper-credit">
+			Photo by <a href="https://unsplash.com/@dreiimos">Lucas Calloch</a> on <a href="https://unsplash.com/photos/red-and-green-trees-beside-river-during-daytime-P-yzuyWFEIk">Unsplash</a>
+		</p>
 	</main>
 </Layout>
 
@@ -73,13 +55,25 @@ import Layout from '../layouts/Layout.astro';
 		--sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
 	}
 
-	.notes {
+	.desktop {
 		position: relative;
+		min-height: 100svh;
+		overflow: hidden;
+		font-family: var(--sans);
+		color: var(--ink);
+		background: var(--paper);
+	}
+
+	.window-state {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.notes-window {
 		display: grid;
 		grid-template-columns: 17.5rem minmax(0, 1fr);
 		min-height: 100svh;
-		font-family: var(--sans);
-		color: var(--ink);
 		background: var(--paper);
 	}
 
@@ -96,9 +90,6 @@ import Layout from '../layouts/Layout.astro';
 		align-items: center;
 		justify-content: space-between;
 		padding: 0.125rem 0.375rem 1.75rem;
-		font-size: 0.8125rem;
-		font-weight: 600;
-		letter-spacing: -0.015em;
 	}
 
 	.section-label,
@@ -106,11 +97,12 @@ import Layout from '../layouts/Layout.astro';
 	.selected-note span,
 	.date,
 	.intro,
-	.note-copy {
+	.note-copy,
+	.wallpaper-credit {
 		margin: 0;
 	}
 
-	.sidebar-heading span {
+	.sidebar-heading > span {
 		color: var(--muted);
 		font-size: 0.75rem;
 		letter-spacing: 0.05em;
@@ -122,19 +114,36 @@ import Layout from '../layouts/Layout.astro';
 	}
 
 	.window-dot {
+		position: relative;
 		display: block;
 		width: 0.75rem;
 		height: 0.75rem;
 		border-radius: 50%;
+		cursor: pointer;
 	}
 
-	label.window-dot {
-		cursor: pointer;
+	.window-dot::after {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		font-size: 0.625rem;
+		font-weight: 700;
+		line-height: 1;
+		color: rgba(55, 42, 25, 0.78);
+		opacity: 0;
+	}
+
+	.window-controls:hover .window-dot::after,
+	.window-dot:focus-visible::after {
+		opacity: 1;
 	}
 
 	.red { background: #ff5f57; }
 	.yellow { background: #febc2e; }
-	.green { background: #28c840; }
+	.red::after { content: '×'; }
+	.yellow::after { content: '−'; }
+	.maximize { display: none; }
 
 	.section-label {
 		padding: 0 0.375rem 0.5rem;
@@ -165,72 +174,14 @@ import Layout from '../layouts/Layout.astro';
 		color: var(--muted);
 	}
 
-	.view-input {
-		position: absolute;
-		opacity: 0;
-		pointer-events: none;
-	}
-
-	.workspace {
-		position: relative;
-		min-width: 0;
-		background: var(--paper);
-	}
-
-	.view-toggle {
-		display: inline-flex;
-		gap: 0.125rem;
-		position: absolute;
-		top: 1.25rem;
-		left: 50%;
-		transform: translateX(-50%);
-		padding: 0.1875rem;
-		border: 1px solid rgba(60, 60, 67, 0.18);
-		border-radius: 0.55rem;
-		background: rgba(246, 246, 248, 0.92);
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-	}
-
-	.view-toggle label {
-		cursor: pointer;
-		padding: 0.3125rem 0.625rem;
-		border-radius: 0.35rem;
-		font-size: 0.75rem;
-		font-weight: 500;
-		line-height: 1;
-		color: var(--muted);
-	}
-
-	#note-view:checked ~ .workspace label[for='note-view'],
-	#things-view:checked ~ .workspace label[for='things-view'] {
-		background: #fff;
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
-		color: var(--ink);
-	}
-
-	.note-page,
-	.things-page {
+	.note-page {
 		box-sizing: border-box;
 		width: min(100%, 46rem);
 		padding: clamp(4.25rem, 13vh, 8.5rem) clamp(1.75rem, 7vw, 6.5rem);
 	}
 
-	.things-page {
-		display: none;
-		width: min(100%, 56rem);
-	}
-
-	#things-view:checked ~ .workspace .note-page {
-		display: none;
-	}
-
-	#things-view:checked ~ .workspace .things-page {
-		display: block;
-	}
-
 	.date {
 		font-size: 0.75rem;
-		font-weight: 400;
 		letter-spacing: -0.006em;
 		color: var(--muted);
 	}
@@ -239,148 +190,117 @@ import Layout from '../layouts/Layout.astro';
 		margin: 0.875rem 0 0;
 		font-size: 1.5rem;
 		font-weight: 600;
-		letter-spacing: normal;
 		line-height: 1.25;
 	}
 
-	h2 {
-		margin: 0.875rem 0 0;
-		font-size: 1.5rem;
-		font-weight: 600;
-		line-height: 1.25;
-	}
-
-	.intro {
-		margin-top: 2.25rem;
-		font-size: 0.875rem;
-		font-weight: 400;
-		letter-spacing: normal;
-		line-height: 1.5;
-	}
-
+	.intro,
 	.note-copy {
-		margin-top: 0.5rem;
 		font-size: 0.875rem;
-		letter-spacing: normal;
 		line-height: 1.5;
-		color: var(--ink);
 	}
 
-	.visual-grid {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 1rem;
-		margin-top: 2.25rem;
+	.intro { margin-top: 2.25rem; }
+	.note-copy { margin-top: 0.5rem; }
+
+	.notes-bay,
+	.wallpaper-credit { display: none; }
+
+	.desktop:has(#note-resting:checked),
+	.desktop:has(#note-closed:checked) {
+		background:
+			linear-gradient(rgba(16, 20, 15, 0.08), rgba(16, 20, 15, 0.08)),
+			url('/images/tokumeien-zen-garden.jpg') center / cover no-repeat;
 	}
 
-	.visual-card,
-	.material-card {
-		margin: 0;
-		min-width: 0;
-		border-radius: 0.75rem;
+	#note-resting:checked ~ .notes-window,
+	#note-closed:checked ~ .notes-window {
+		position: absolute;
+		z-index: 1;
+		min-height: 0;
 		overflow: hidden;
-		background: #f5f5f7;
+		border: 1px solid rgba(255, 255, 255, 0.36);
+		border-radius: 0.95rem;
+		box-shadow: 0 1.75rem 4.75rem rgba(16, 18, 13, 0.35), 0 0.125rem 0.5rem rgba(16, 18, 13, 0.2);
 	}
 
-	.image-placeholder {
+	#note-resting:checked ~ .notes-window {
+		top: clamp(2.5rem, 8vh, 6rem);
+		left: 50%;
+		width: min(76vw, 68rem);
+		height: min(72svh, 46rem);
+		transform: translateX(-50%);
+	}
+
+	#note-resting:checked ~ .notes-window .maximize { display: block; }
+	#note-resting:checked ~ .notes-window .minimize { display: none; }
+	#note-resting:checked ~ .notes-window .note-page { padding-top: clamp(3rem, 9vh, 5.75rem); }
+	#note-closed:checked ~ .notes-window { display: none; }
+
+	#note-resting:checked ~ .notes-bay,
+	#note-closed:checked ~ .notes-bay {
+		display: block;
+		position: fixed;
+		z-index: 2;
+		bottom: 1.25rem;
+		left: 50%;
+		transform: translateX(-50%);
+		padding: 0.5rem;
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		border-radius: 1rem;
+		background: rgba(247, 247, 249, 0.5);
+		box-shadow: 0 0.625rem 1.75rem rgba(0, 0, 0, 0.25);
+		backdrop-filter: blur(18px) saturate(1.2);
+	}
+
+	.notes-bay label {
 		display: grid;
 		place-items: center;
-		width: 100%;
-		aspect-ratio: 1.2;
-		background:
-			linear-gradient(135deg, rgba(171, 195, 211, 0.56), transparent 48%),
-			linear-gradient(315deg, rgba(234, 193, 167, 0.5), transparent 48%),
-			#e9e9ed;
+		width: 3.25rem;
+		height: 3.25rem;
+		border-radius: 0.7rem;
+		cursor: pointer;
+		background: linear-gradient(180deg, #fff 0 17%, #f8dd69 17% 28%, #fff 28%);
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 0.1875rem 0.375rem rgba(0, 0, 0, 0.14);
 	}
 
-	.image-placeholder.second {
-		background:
-			linear-gradient(135deg, rgba(213, 194, 169, 0.54), transparent 48%),
-			linear-gradient(315deg, rgba(181, 199, 184, 0.54), transparent 48%),
-			#e9e9ed;
-	}
-
-	.image-placeholder span {
-		padding: 0.375rem 0.5rem;
-		border: 1px solid rgba(60, 60, 67, 0.16);
-		border-radius: 0.35rem;
-		background: rgba(255, 255, 255, 0.5);
-		font-size: 0.6875rem;
-		color: var(--muted);
-	}
-
-	.visual-card figcaption {
-		padding: 0.625rem 0.75rem 0.75rem;
-		font-size: 0.75rem;
-		color: var(--muted);
-	}
-
-	.material-card {
-		display: flex;
-		align-items: flex-start;
-		gap: 0.5rem;
-		grid-column: span 2;
-		padding: 1rem;
-	}
-
-	.material-dot {
+	.notes-icon {
 		display: block;
-		flex: 0 0 auto;
-		width: 0.625rem;
-		height: 0.625rem;
-		border-radius: 50%;
+		width: 1.75rem;
+		height: 1.2rem;
+		border-radius: 0.15rem;
+		background: repeating-linear-gradient(to bottom, transparent 0 0.22rem, rgba(181, 181, 181, 0.72) 0.24rem 0.27rem);
 	}
 
-	.blue { background: #9fc6d8; }
-	.peach { background: #dfae8f; }
-	.graphite { background: #51545a; }
-
-	.material-card p {
-		margin: 0 0 0 0.25rem;
-		font-size: 0.8125rem;
-		line-height: 1.4;
-		color: var(--muted);
+	#note-resting:checked ~ .wallpaper-credit,
+	#note-closed:checked ~ .wallpaper-credit {
+		display: block;
+		position: fixed;
+		z-index: 2;
+		right: 1rem;
+		bottom: 1rem;
+		font-size: 0.625rem;
+		color: rgba(255, 255, 255, 0.7);
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.48);
 	}
+
+	.wallpaper-credit a { color: inherit; }
 
 	@media (max-width: 700px) {
-		.notes {
-			grid-template-columns: 1fr;
-		}
-
+		.notes-window { grid-template-columns: 1fr; }
 		.sidebar {
 			min-height: auto;
 			padding: 1rem 1.125rem;
 			border-right: 0;
 			border-bottom: 1px solid var(--rule);
 		}
-
-		.sidebar-heading {
-			padding: 0;
-		}
-
+		.sidebar-heading { padding: 0; }
 		.section-label,
-		.selected-note {
-			display: none;
-		}
-
-		.note-page {
-			padding: 3.25rem 1.375rem;
-		}
-
-		.things-page {
-			padding: 3.25rem 1.375rem;
-		}
-
-		.view-toggle {
-			top: 0.75rem;
-		}
-
-		.visual-grid {
-			grid-template-columns: 1fr;
-		}
-
-		.material-card {
-			grid-column: auto;
+		.selected-note { display: none; }
+		.note-page { padding: 3.25rem 1.375rem; }
+		#note-resting:checked ~ .notes-window {
+			top: 2rem;
+			width: calc(100vw - 2rem);
+			height: min(70svh, 38rem);
 		}
 	}
 </style>
