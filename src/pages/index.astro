@@ -12,8 +12,7 @@ import Layout from '../layouts/Layout.astro';
 			<header class="window-titlebar" data-drag-region>
 				<div class="window-controls" aria-label="Window controls" data-window-control>
 					<label class="window-dot red" for="note-closed" aria-label="Close note" title="Close note"></label>
-					<label class="window-dot yellow minimize" for="note-resting" aria-label="Minimize note" title="Minimize note"></label>
-					<label class="window-dot yellow maximize" for="note-open" aria-label="Maximize note" title="Maximize note"></label>
+					<button class="window-dot yellow" type="button" data-size-toggle aria-label="Make note smaller" title="Make note smaller"></button>
 				</div>
 			</header>
 
@@ -88,6 +87,7 @@ import Layout from '../layouts/Layout.astro';
 	const openState = document.querySelector('#note-open');
 	const resizeHandles = document.querySelectorAll('.resize-handle');
 	const titlebar = document.querySelector('[data-drag-region]');
+	const sizeToggle = document.querySelector('[data-size-toggle]');
 	const sidebar = document.querySelector('.sidebar');
 	const sidebarResize = document.querySelector('.sidebar-resize');
 	const moreButton = document.querySelector('.more-button');
@@ -96,6 +96,25 @@ import Layout from '../layouts/Layout.astro';
 	const galleryCard = document.querySelector('.gallery-card');
 
 	const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+	const syncSizeToggle = () => {
+		if (!sizeToggle || !openState || !restingState) return;
+		const isFullSize = openState.checked;
+		sizeToggle.dataset.mode = isFullSize ? 'shrink' : 'expand';
+		sizeToggle.setAttribute('aria-label', isFullSize ? 'Make note smaller' : 'Make note full screen');
+		sizeToggle.title = isFullSize ? 'Make note smaller' : 'Make note full screen';
+	};
+
+	sizeToggle?.addEventListener('click', () => {
+		if (!openState || !restingState) return;
+		if (openState.checked) {
+			restingState.checked = true;
+			restingState.dispatchEvent(new Event('change'));
+		} else {
+			openState.checked = true;
+			openState.dispatchEvent(new Event('change'));
+		}
+	});
 
 	resizeHandles.forEach((handle) => {
 		handle.addEventListener('pointerdown', (event) => {
@@ -253,7 +272,11 @@ import Layout from '../layouts/Layout.astro';
 		if (!noteWindow || !openState.checked) return;
 		noteWindow.classList.remove('is-resized', 'is-manually-positioned');
 		['left', 'top', 'width', 'height'].forEach((property) => noteWindow.style.removeProperty(property));
+		syncSizeToggle();
 	});
+
+	restingState?.addEventListener('change', syncSizeToggle);
+	syncSizeToggle();
 </script>
 
 <style>
@@ -336,7 +359,9 @@ import Layout from '../layouts/Layout.astro';
 		display: block;
 		width: 0.75rem;
 		height: 0.75rem;
+		padding: 0;
 		border-radius: 50%;
+		border: 0;
 		cursor: pointer;
 	}
 
@@ -361,7 +386,7 @@ import Layout from '../layouts/Layout.astro';
 	.yellow { background: #febc2e; }
 	.red::after { content: '×'; }
 	.yellow::after { content: '−'; }
-	.maximize { display: none; }
+	.yellow[data-mode='expand']::after { content: '↗'; font-size: 0.5rem; }
 
 	.sidebar-header {
 		display: flex;
@@ -617,8 +642,6 @@ import Layout from '../layouts/Layout.astro';
 		transform: translateX(-50%);
 	}
 
-	#note-resting:checked ~ .notes-window .maximize { display: block; }
-	#note-resting:checked ~ .notes-window .minimize { display: none; }
 	#note-resting:checked ~ .notes-window .note-page { padding-top: clamp(3rem, 9vh, 5.75rem); }
 	#note-closed:checked ~ .notes-window { display: none; }
 
