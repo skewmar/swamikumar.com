@@ -4,15 +4,13 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout>
 	<main class="desktop">
-		<input class="window-state" type="radio" name="window-state" id="note-open" checked />
-		<input class="window-state" type="radio" name="window-state" id="note-resting" />
+		<input class="window-state" type="radio" name="window-state" id="note-resting" checked />
 		<input class="window-state" type="radio" name="window-state" id="note-closed" />
 
 		<section class="notes-window" aria-label="Swami Kumar’s note">
 			<header class="window-titlebar" data-drag-region>
 				<div class="window-controls" aria-label="Window controls" data-window-control>
 					<label class="window-dot red" for="note-closed" aria-label="Close note" title="Close note"></label>
-					<button class="window-dot yellow" type="button" data-size-toggle aria-label="Make note smaller" title="Make note smaller"></button>
 				</div>
 			</header>
 
@@ -66,7 +64,7 @@ import Layout from '../layouts/Layout.astro';
 		<div class="notes-bay" aria-label="Notes dock">
 			<span class="dock-app finder" aria-hidden="true"></span>
 			<span class="dock-app launch" aria-hidden="true"></span>
-			<label class="dock-app notes-app" for="note-open" aria-label="Open note" title="Open note">
+			<label class="dock-app notes-app" for="note-resting" aria-label="Open note" title="Open note">
 				<span class="notes-icon" aria-hidden="true"></span>
 			</label>
 			<span class="dock-app photos" aria-hidden="true"></span>
@@ -84,10 +82,8 @@ import Layout from '../layouts/Layout.astro';
 <script>
 	const noteWindow = document.querySelector('.notes-window');
 	const restingState = document.querySelector('#note-resting');
-	const openState = document.querySelector('#note-open');
 	const resizeHandles = document.querySelectorAll('.resize-handle');
 	const titlebar = document.querySelector('[data-drag-region]');
-	const sizeToggle = document.querySelector('[data-size-toggle]');
 	const sidebar = document.querySelector('.sidebar');
 	const sidebarResize = document.querySelector('.sidebar-resize');
 	const moreButton = document.querySelector('.more-button');
@@ -96,25 +92,6 @@ import Layout from '../layouts/Layout.astro';
 	const galleryCard = document.querySelector('.gallery-card');
 
 	const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
-	const syncSizeToggle = () => {
-		if (!sizeToggle || !openState || !restingState) return;
-		const isFullSize = openState.checked;
-		sizeToggle.dataset.mode = isFullSize ? 'shrink' : 'expand';
-		sizeToggle.setAttribute('aria-label', isFullSize ? 'Make note smaller' : 'Make note full screen');
-		sizeToggle.title = isFullSize ? 'Make note smaller' : 'Make note full screen';
-	};
-
-	sizeToggle?.addEventListener('click', () => {
-		if (!openState || !restingState) return;
-		if (openState.checked) {
-			restingState.checked = true;
-			restingState.dispatchEvent(new Event('change'));
-		} else {
-			openState.checked = true;
-			openState.dispatchEvent(new Event('change'));
-		}
-	});
 
 	resizeHandles.forEach((handle) => {
 		handle.addEventListener('pointerdown', (event) => {
@@ -268,15 +245,6 @@ import Layout from '../layouts/Layout.astro';
 		if (notesMenu && !notesMenu.hidden && !menuWrap?.contains(event.target)) closeMenu();
 	});
 
-	openState?.addEventListener('change', () => {
-		if (!noteWindow || !openState.checked) return;
-		noteWindow.classList.remove('is-resized', 'is-manually-positioned');
-		['left', 'top', 'width', 'height'].forEach((property) => noteWindow.style.removeProperty(property));
-		syncSizeToggle();
-	});
-
-	restingState?.addEventListener('change', syncSizeToggle);
-	syncSizeToggle();
 </script>
 
 <style>
@@ -383,10 +351,7 @@ import Layout from '../layouts/Layout.astro';
 	}
 
 	.red { background: #ff5f57; }
-	.yellow { background: #febc2e; }
 	.red::after { content: '×'; }
-	.yellow::after { content: '−'; }
-	.yellow[data-mode='expand']::after { content: '↗'; font-size: 0.5rem; }
 
 	.sidebar-header {
 		display: flex;
@@ -601,7 +566,6 @@ import Layout from '../layouts/Layout.astro';
 	.notes-bay,
 	.wallpaper-credit { display: none; }
 
-	.desktop:has(#note-open:checked),
 	.desktop:has(#note-resting:checked),
 	.desktop:has(#note-closed:checked) {
 		background:
@@ -609,7 +573,6 @@ import Layout from '../layouts/Layout.astro';
 			url('/images/tokumeien-zen-garden.jpg') center / cover no-repeat;
 	}
 
-	#note-open:checked ~ .notes-window,
 	#note-resting:checked ~ .notes-window,
 	#note-closed:checked ~ .notes-window {
 		position: absolute;
@@ -619,16 +582,6 @@ import Layout from '../layouts/Layout.astro';
 		border: 1px solid rgba(255, 255, 255, 0.36);
 		border-radius: 0.95rem;
 		box-shadow: 0 1.75rem 4.75rem rgba(16, 18, 13, 0.35), 0 0.125rem 0.5rem rgba(16, 18, 13, 0.2);
-	}
-
-	#note-open:checked ~ .notes-window {
-		top: clamp(1.5rem, 5vh, 3.75rem);
-		left: 50%;
-		width: min(82vw, 78rem);
-		height: min(82svh, 52rem);
-		min-width: 26.25rem;
-		min-height: 18.75rem;
-		transform: translateX(-50%);
 	}
 
 	#note-resting:checked ~ .notes-window {
@@ -762,13 +715,6 @@ import Layout from '../layouts/Layout.astro';
 		}
 		.gallery-preview { grid-column: 1; grid-row: 3; }
 		.sidebar-resize { display: none; }
-		#note-open:checked ~ .notes-window {
-			top: 1rem;
-			width: calc(100vw - 2rem);
-			height: calc(100svh - 2rem);
-			min-width: 0;
-			min-height: 0;
-		}
 		#note-resting:checked ~ .notes-window {
 			top: 2rem;
 			width: calc(100vw - 2rem);
