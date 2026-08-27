@@ -36,7 +36,7 @@ import Layout from '../layouts/Layout.astro';
 					</div>
 				</div>
 				<div class="selected-note">
-					<p>A creative mind</p>
+					<p><span class="note-emoji" aria-hidden="true">📌</span>A creative mind</p>
 					<span>in a logical world</span>
 				</div>
 			</aside>
@@ -49,9 +49,12 @@ import Layout from '../layouts/Layout.astro';
 			</article>
 			<section class="gallery-preview" aria-label="Gallery preview">
 				<button class="gallery-card" type="button" aria-label="Open the swami kumar note">
-					<p>August 2026</p>
-					<h2>swami kumar</h2>
-					<span>A creative mind stuck in a logical world.</span>
+					<img class="note-cover" src="/images/tokumeien-zen-garden.jpg" alt="Autumn garden with red and green trees" width="1200" height="800" loading="lazy" decoding="async" />
+					<div class="gallery-card-content">
+						<p>August 2026</p>
+						<h2><span aria-hidden="true">📌</span> swami kumar</h2>
+						<span>A creative mind stuck in a logical world.</span>
+					</div>
 				</button>
 			</section>
 			<span class="sidebar-resize" aria-hidden="true"></span>
@@ -62,15 +65,9 @@ import Layout from '../layouts/Layout.astro';
 		</section>
 
 		<div class="notes-bay" aria-label="Notes dock">
-			<span class="dock-app finder" aria-hidden="true"></span>
-			<span class="dock-app launch" aria-hidden="true"></span>
 			<label class="dock-app notes-app" for="note-resting" aria-label="Open note" title="Open note">
 				<span class="notes-icon" aria-hidden="true"></span>
 			</label>
-			<span class="dock-app photos" aria-hidden="true"></span>
-			<span class="dock-app music" aria-hidden="true"></span>
-			<span class="dock-separator" aria-hidden="true"></span>
-			<span class="dock-app settings" aria-hidden="true"></span>
 		</div>
 
 		<p class="wallpaper-credit">
@@ -444,6 +441,8 @@ import Layout from '../layouts/Layout.astro';
 		letter-spacing: -0.014em;
 	}
 
+	.note-emoji { margin-right: 0.25rem; }
+
 	.selected-note span {
 		display: block;
 		margin-top: 0.125rem;
@@ -513,7 +512,8 @@ import Layout from '../layouts/Layout.astro';
 	.gallery-card {
 		box-sizing: border-box;
 		width: 100%;
-		padding: 1rem;
+		padding: 0;
+		overflow: hidden;
 		border: 1px solid rgba(60, 60, 67, 0.14);
 		border-radius: 0.65rem;
 		background: linear-gradient(145deg, #fff, #f2f2f6);
@@ -523,6 +523,15 @@ import Layout from '../layouts/Layout.astro';
 		box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
 		cursor: pointer;
 	}
+
+	.note-cover {
+		display: block;
+		width: 100%;
+		aspect-ratio: 3 / 2;
+		object-fit: cover;
+	}
+
+	.gallery-card-content { padding: 1rem; }
 
 	.gallery-card:hover,
 	.gallery-card:focus-visible {
@@ -568,9 +577,7 @@ import Layout from '../layouts/Layout.astro';
 
 	.desktop:has(#note-resting:checked),
 	.desktop:has(#note-closed:checked) {
-		background:
-			linear-gradient(rgba(16, 20, 15, 0.08), rgba(16, 20, 15, 0.08)),
-			url('/images/tokumeien-zen-garden.jpg') center / cover no-repeat;
+		background: url('/images/tokumeien-zen-garden.jpg') center / cover no-repeat;
 	}
 
 	#note-resting:checked ~ .notes-window,
@@ -655,19 +662,6 @@ import Layout from '../layouts/Layout.astro';
 	.notes-app {
 		cursor: pointer;
 		background: linear-gradient(180deg, #fff 0 17%, #f8dd69 17% 28%, #fff 28%);
-	}
-
-	.finder { background: linear-gradient(90deg, #9bd3ff 0 49%, #e9f5ff 49%); }
-	.launch { background: linear-gradient(135deg, #e94b43, #ff9d45); }
-	.photos { background: conic-gradient(#ee665e, #f6c75b, #74bf79, #61aed8, #b585dc, #ee665e); }
-	.music { background: linear-gradient(135deg, #ff6f77, #e5325f); }
-	.settings { background: radial-gradient(circle, #c5c8cd 0 28%, #757b84 29% 40%, #d8dade 41% 60%, #737981 61%); }
-
-	.dock-separator {
-		width: 1px;
-		height: 2.4rem;
-		margin: 0 0.075rem;
-		background: rgba(0, 0, 0, 0.16);
 	}
 
 	.notes-icon {
